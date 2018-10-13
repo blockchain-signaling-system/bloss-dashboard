@@ -10,6 +10,12 @@
     <el-container v-loading="!isConnected">
       <el-main>
 
+<el-switch
+  v-model="statusPollingActive"
+  active-text="Polling Status"
+  inactive-text="Idle">
+</el-switch>
+
           <div>
             <el-tag :type="isConnected ? 'success' : 'danger'">Websocket</el-tag>
             <a-badge :status="isConnected ? 'success' : 'error'" text="WEBSOCKET" />  
@@ -72,6 +78,7 @@ export default {
       isConnected: false,
       socketMessage: "",
       statusMessage: "",
+      statusPollingActive: false,
       serviceStatusBloss: false,
       serviceStatusGeth: false,
       serviceStatusIPFS: false,
@@ -100,41 +107,34 @@ export default {
       this.socketMessage = data;
     },
     statusChannel(data) {
-      if (data.geth != null) { 
-        if(data.geth === "active")
-          this.updateStatus("geth", true);
-        if(data.geth === "inactive")
-          this.updateStatus("geth",false);
+      if (data.geth != null) {
+        if (data.geth === "active") this.updateStatus("geth", true);
+        if (data.geth === "inactive") this.updateStatus("geth", false);
       }
-      if (data.ipfs != null) { 
-        if(data.ipfs === "active")
-          this.updateStatus("ipfs", true);
-        if(data.ipfs === "inactive")
-          this.updateStatus("ipfs",false);
+      if (data.ipfs != null) {
+        if (data.ipfs === "active") this.updateStatus("ipfs", true);
+        if (data.ipfs === "inactive") this.updateStatus("ipfs", false);
       }
-      if (data.bloss != null) { 
-        if(data.bloss === "active")
-          this.updateStatus("bloss", true);
-        if(data.bloss === "inactive")
-          this.updateStatus("bloss",false);
+      if (data.bloss != null) {
+        if (data.bloss === "active") this.updateStatus("bloss", true);
+        if (data.bloss === "inactive") this.updateStatus("bloss", false);
       }
 
-      console.log(data); 
+      console.log(data);
       this.statusMessage = data;
-
     }
   },
   methods: {
     updateStatus(service, status) {
       switch (service) {
-        case 'geth':
-          this.serviceStatusGeth = status;    
+        case "geth":
+          this.serviceStatusGeth = status;
           break;
-        case 'ipfs':
-          this.serviceStatusIPFS = status;    
+        case "ipfs":
+          this.serviceStatusIPFS = status;
           break;
-        case 'bloss':
-          this.serviceStatusBloss = status;    
+        case "bloss":
+          this.serviceStatusBloss = status;
           break;
         default:
           console.log("no match");
@@ -151,6 +151,9 @@ export default {
       // Send the "pingServer" event to the server.
       this.$socket.emit("getUptime", "uptime");
     },
+    toggleStatusPolling() {
+      this.$socket.emit("statusPolling", "toggle");
+    },
     getStatus() {
       // Send the "pingServer" event to the server.
       this.$socket.emit("getStatus", "status");
@@ -160,6 +163,11 @@ export default {
     },
     killService(servicename) {
       this.$socket.emit("serviceCtl", { cmd: "stop", service: servicename });
+    }
+  },
+  watch: {
+    statusPollingActive: function() {
+      this.toggleStatusPolling();
     }
   },
   name: "home",
