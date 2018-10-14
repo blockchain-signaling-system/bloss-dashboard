@@ -7,61 +7,77 @@
       showIcon
       v-if="!isConnected"
     />
-    <el-container v-loading="!isConnected">
-      <el-header></el-header>
-      <el-main> <b-tooltip label="Tooltip right"
-            position="is-right">
-            <button class="button is-dark is-twitter">
-                Right
-            </button>
-        </b-tooltip>
-
-        <div>
-          <el-card style="text-align:left;" class="box-card" shadow="hover">
-            
-            <div slot="header" class="clearfix">
-              <span>Status</span>
-              <!-- <el-button style="float: right; padding: 3px 0" type="text">Operation button</el-button> -->
-              <el-switch
-                style="float:right;padding:3px 0"
-                v-model="statusPollingActive"
-                active-text="Polling Status"
-                inactive-text="Idle"
-              ></el-switch>
-            </div>
-            <div>
-              <a-badge :status="isConnected ? 'success' : 'error'"/>
-              <el-tag :type="isConnected ? 'success' : 'danger'" size="mini">WEBSOCKET</el-tag>
-              <br>
-              <a-badge :status="isControllerAvailable ? 'success' : 'error'"/>
-              <el-tag :type="isControllerAvailable ? 'success' : 'danger'" size="mini">CONTROLLER</el-tag>
-              <br>
-              <a-badge :status="serviceStatusBloss ? 'success' : 'error'"/>
-              <el-tag :type="serviceStatusBloss ? 'success' : 'danger'" size="mini">BLOSS</el-tag>
-              <el-button @click="killService('bloss')" size="mini" round>Stop</el-button>
-              <el-button @click="startService('bloss')" size="mini" round>Start</el-button>
-              <br>
-              <a-badge :status="serviceStatusGeth ? 'success' : 'error'"/>
-              <el-tag :type="serviceStatusGeth ? 'success' : 'danger'" size="mini">GETH</el-tag>
-              <el-button @click="killService('geth')" size="mini" round>Stop</el-button>
-              <el-button @click="startService('geth')" size="mini" round>Start</el-button>
-              <br>
-              <a-badge :status="serviceStatusIPFS ? 'success' : 'error'"/>
-              <el-tag :type="serviceStatusIPFS ? 'success' : 'danger'" size="mini">IPFS</el-tag>
-              <el-button @click="killService('ipfs')" size="mini" round>Stop</el-button>
-              <el-button @click="startService('ipfs')" size="mini" round>Start</el-button>
-              <br>
-              <a-badge :status="serviceStatusInfluxDB ? 'success' : 'error'"/>
-              <el-tag :type="serviceStatusInfluxDB ? 'success' : 'danger'" size="mini">INFLUXDB</el-tag>
-              <el-button @click="killService('influxdb')" size="mini" round>Stop</el-button>
-              <el-button @click="startService('influxdb')" size="mini" round>Start</el-button>
-              <br>
-            </div>
-            <!-- <div v-for="o in 4" :key="o" class="text item">{{'List item ' + o }}</div> -->
-          </el-card>
+    <section class="section">
+      <div class="container">
+        <h1 class="title">BLOSS</h1>
+        <div class="columns">
+          <div class="column">First Column</div>
+          <div class="column">Second Column</div>
+          <div class="column">Third Column</div>
+          <div class="column">
+            <el-container v-loading="!isConnected">
+              <div class="box">
+                <article class="media">
+                  <div class="media-content">
+                    <div class="media-title">System Status</div>
+                    <br>
+                    <div class="field">
+                      <b-switch
+                        v-model="statusPollingActive"
+                        :disabled="(isConnected) ? false:true"
+                        size="is-small"
+                      >Status Polling</b-switch>
+                    </div>
+                    <div class="content">
+                      <p>
+                        <a-badge :status="isConnected ? 'success' : 'error'"/>
+                        <el-tag :type="isConnected ? 'success' : 'danger'" size="mini">WEBSOCKET</el-tag>
+                        <br>
+                        <!-- <a-badge :status="isControllerAvailable ? 'success' : 'error'"/>
+                        <el-tag
+                          :type="isControllerAvailable ? 'success' : 'danger'"
+                          size="mini"
+                        >CONTROLLER</el-tag> -->
+                      </p>
+                      <hr>
+                      <div v-show="isConnected">
+                        <div class="tile">
+                          <a-badge :status="serviceStatusBloss ? 'success' : 'error'"/>
+                          <el-tag
+                            :type="serviceStatusBloss ? 'success' : 'danger'"
+                            size="mini"
+                          >BLOSS</el-tag>
+                          <el-button @click="killService('bloss')" size="mini" round>Stop</el-button>
+                          <el-button @click="startService('bloss')" size="mini" round>Start</el-button>
+                          <br>
+                        </div>
+                        <a-badge :status="serviceStatusGeth ? 'success' : 'error'"/>
+                        <el-tag :type="serviceStatusGeth ? 'success' : 'danger'" size="mini">GETH</el-tag>
+                        <el-button @click="killService('geth')" size="mini" round>Stop</el-button>
+                        <el-button @click="startService('geth')" size="mini" round>Start</el-button>
+                        <br>
+                        <a-badge :status="serviceStatusIPFS ? 'success' : 'error'"/>
+                        <el-tag :type="serviceStatusIPFS ? 'success' : 'danger'" size="mini">IPFS</el-tag>
+                        <el-button @click="killService('ipfs')" size="mini" round>Stop</el-button>
+                        <el-button @click="startService('ipfs')" size="mini" round>Start</el-button>
+                        <br>
+                        <a-badge :status="serviceStatusInfluxDB ? 'success' : 'error'"/>
+                        <el-tag
+                          :type="serviceStatusInfluxDB ? 'success' : 'danger'"
+                          size="mini"
+                        >INFLUXDB</el-tag>
+                        <el-button @click="killService('influxdb')" size="mini" round>Stop</el-button>
+                        <el-button @click="startService('influxdb')" size="mini" round>Start</el-button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </el-container>
+          </div>
         </div>
-      </el-main>
-    </el-container>
+      </div>
+    </section>
   </div>
 </template>
 

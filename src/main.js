@@ -8,10 +8,18 @@ import ElementUI from 'element-ui';
 import Buefy from 'buefy'
 import 'element-ui/lib/theme-chalk/index.css';
 import { Card, Badge, Alert, Switch, Button } from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css'; 
-// import 'buefy/dist/buefy.css'
+import 'ant-design-vue/dist/antd.css';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+//import { fas } from '@fortawesome/free-brands-svg-icons';
+//import  fas  from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+ 
+library.add(fas);
+//library.add(freeBrands);
+//library.add(freeRegular);
 
-
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.component(Badge.name, Badge);
 Vue.component(Card.name, Card);
@@ -25,7 +33,9 @@ Vue.config.productionTip = false;
 
 Vue.use(VueSocketIO, SocketInstance);
 Vue.use(ElementUI);
-Vue.use(Buefy)
+Vue.use(Buefy, {
+  defaultIconPack: 'fas'
+})
 
 new Vue({
   router,
