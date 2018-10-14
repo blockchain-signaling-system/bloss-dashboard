@@ -1,68 +1,98 @@
 <template>
   <div>
     <a-alert
-          message="Websocket connection lost"
-          description="Trying to reconnect."
-          type="warning"
-          showIcon
-          v-if="!isConnected"
-      />
+      message="Websocket connection lost"
+      description="Trying to reconnect."
+      type="warning"
+      showIcon
+      v-if="!isConnected"
+    />
     <el-container v-loading="!isConnected">
+      <el-header></el-header>
       <el-main>
-
-<el-switch
-  v-model="statusPollingActive"
-  active-text="Polling Status"
-  inactive-text="Idle">
-</el-switch>
-
-          <div>
-            <el-tag :type="isConnected ? 'success' : 'danger'">Websocket</el-tag>
-            <a-badge :status="isConnected ? 'success' : 'error'" text="WEBSOCKET" />  
-            <br />
-            <a-badge :status="serviceStatusBloss ? 'success' : 'error'" text="BLOSS" />  
-            <el-tag  :type="serviceStatusBloss ? 'success' : 'danger'" size="small">BLOSS</el-tag>
-            <el-button @click="killService('bloss')" size="mini" round >Stop</el-button>
-            <el-button @click="startService('bloss')" size="mini" round>Start</el-button>
-            <br />
-            <a-badge :status="serviceStatusGeth ? 'success' : 'error'" text="GETH" />
-            <el-tag  :type="serviceStatusGeth ? 'success' : 'danger'" size="small">GETH</el-tag>
-            <el-button @click="killService('geth')" size="mini" round >Stop</el-button>
-            <el-button @click="startService('geth')" size="mini" round>Start</el-button>
-            <br />
-            <a-badge :status="serviceStatusIPFS ? 'success' : 'error'" text="IPFS" />
-            <el-tag  :type="serviceStatusIPFS ? 'success' : 'danger'" size="small">IPFS</el-tag>
-            <el-button @click="killService('ipfs')" size="mini" round >Stop</el-button>
-            <el-button @click="startService('ipfs')" size="mini" round>Start</el-button>
-            <br />
-            <a-badge :status="serviceStatusInfluxDB ? 'success' : 'error'"/>
-            <el-tag  :type="serviceStatusInfluxDB ? 'success' : 'danger'" size="small">INFLUXDB</el-tag>
-            <el-button @click="killService('influxdb')" size="mini" round >Stop</el-button>
-            <el-button @click="startService('influxdb')" size="mini" round>Start</el-button>
-            <br />
-          </div>
-    
         <div>
-    <a-button type="primary" ghost>Primary</a-button>
-    <a-button ghost>Default</a-button>
-    <a-button type="dashed" ghost>Dashed</a-button>
-    <a-button type="danger" ghost>danger</a-button>
-  </div>
-        <el-row>
-        <el-button :type="serviceStatusBloss ? 'success' : 'danger'" size="mini" >BLOSS</el-button>
-        <el-button :type="serviceStatusGeth ? 'success' : 'danger'" size="mini" >GETH</el-button>
-        <el-button :type="serviceStatusIPFS ? 'success' : 'danger'" size="mini" >IPFS</el-button>
-        <el-button :type="serviceStatusInfluxDB ? 'success' : 'danger'" size="mini" >INFLUXDB</el-button>
-        </el-row>
-
-        <el-row>
-        <p v-if="isConnected">We're connected to the server!</p>
-        <p v-else>We're NOT connected to the server!</p>
-        <p>Message from server: "{{socketMessage}}"</p>
-        <p>Message from server: "{{statusMessage}}"</p>
-        <button @click="getUptime()">Get Uptime</button>
-        <button @click="getStatus()">Get Status</button>
-        </el-row>
+          <el-card class="box-card" shadow="hover" >
+            <div slot="header" class="clearfix">
+              <span>Status</span>
+              <!-- <el-button style="float: right; padding: 3px 0" type="text">Operation button</el-button> -->
+              <el-switch
+                style="float:right;padding:3px 0"
+                v-model="statusPollingActive"
+                active-text="Polling Status"
+                inactive-text="Idle"
+              ></el-switch>
+            </div>
+            <div>
+              <a-badge :status="isConnected ? 'success' : 'error'"/>
+              <el-tag :type="isConnected ? 'success' : 'danger'" size="mini">WEBSOCKET</el-tag>
+              <br>
+              <a-badge :status="isControllerAvailable ? 'success' : 'error'"/>
+              <el-tag :type="isControllerAvailable ? 'success' : 'danger'" size="mini">CONTROLLER</el-tag>
+              <br>
+              <a-badge :status="serviceStatusBloss ? 'success' : 'error'"/>
+              <el-tag :type="serviceStatusBloss ? 'success' : 'danger'" size="mini">BLOSS</el-tag>
+              <el-button
+                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
+                @click="killService('bloss')"
+                size="mini"
+                round
+              >Stop</el-button>
+              <el-button
+                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
+                @click="startService('bloss')"
+                size="mini"
+                round
+              >Start</el-button>
+              <br>
+              <a-badge :status="serviceStatusGeth ? 'success' : 'error'"/>
+              <el-tag :type="serviceStatusGeth ? 'success' : 'danger'" size="mini">GETH</el-tag>
+              <el-button
+                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
+                @click="killService('geth')"
+                size="mini"
+                round
+              >Stop</el-button>
+              <el-button
+                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
+                @click="startService('geth')"
+                size="mini"
+                round
+              >Start</el-button>
+              <br>
+              <a-badge :status="serviceStatusIPFS ? 'success' : 'error'"/>
+              <el-tag :type="serviceStatusIPFS ? 'success' : 'danger'" size="mini">IPFS</el-tag>
+              <el-button
+                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
+                @click="killService('ipfs')"
+                size="mini"
+                round
+              >Stop</el-button>
+              <el-button
+                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
+                @click="startService('ipfs')"
+                size="mini"
+                round
+              >Start</el-button>
+              <br>
+              <a-badge :status="serviceStatusInfluxDB ? 'success' : 'error'"/>
+              <el-tag :type="serviceStatusInfluxDB ? 'success' : 'danger'" size="mini">INFLUXDB</el-tag>
+              <el-button
+                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
+                @click="killService('influxdb')"
+                size="mini"
+                round
+              >Stop</el-button>
+              <el-button
+                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
+                @click="startService('influxdb')"
+                size="mini"
+                round
+              >Start</el-button>
+              <br>
+            </div>
+            <!-- <div v-for="o in 4" :key="o" class="text item">{{'List item ' + o }}</div> -->
+          </el-card>
+        </div>
       </el-main>
     </el-container>
   </div>
@@ -76,6 +106,7 @@ export default {
   data() {
     return {
       isConnected: false,
+      isControllerAvailable: false,
       socketMessage: "",
       statusMessage: "",
       statusPollingActive: false,
@@ -102,9 +133,8 @@ export default {
       this.isConnected = false;
     },
     // Fired when the server sends something on the "messageChannel" channel.
-    messageChannel(data) {
-      console.log(data);
-      this.socketMessage = data;
+    isControllerAvailable(data) {
+      this.isControllerAvailable = data.isControllerAvailable;
     },
     statusChannel(data) {
       if (data.geth != null) {
@@ -154,6 +184,9 @@ export default {
     toggleStatusPolling() {
       this.$socket.emit("statusPolling", "toggle");
     },
+    fetchControllerStatus() {
+      this.$socket.emit("isControllerAvailable", "toggle");
+    },
     getStatus() {
       // Send the "pingServer" event to the server.
       this.$socket.emit("getStatus", "status");
@@ -168,6 +201,9 @@ export default {
   watch: {
     statusPollingActive: function() {
       this.toggleStatusPolling();
+    },
+    isConnected: function() {
+      this.fetchControllerStatus();
     }
   },
   name: "home",
@@ -175,41 +211,41 @@ export default {
     HelloWorld
   }
 };
+//#
 </script>
 
 <style>
 .el-header,
 .el-footer {
-  background-color: #b3c0d1;
-  color: #333;
-  text-align: center;
-  line-height: 60px;
-}
-
-.el-aside {
-  background-color: #d3dce6;
-  color: #333;
-  text-align: center;
-  line-height: 200px;
+  background-color: #2b3648;
 }
 
 .el-main {
-  background-color: #e9eef3;
-  color: #333;
-  text-align: center;
-  line-height: 160px;
+  background-color: #212936;
 }
 
-body > .el-container {
-  margin-bottom: 20px;
+.dark-button {
+  background-color: #212936;
 }
 
-.el-container:nth-child(5) .el-aside,
-.el-container:nth-child(6) .el-aside {
-  line-height: 260px;
+.text {
+  font-size: 14px;
 }
 
-.el-container:nth-child(7) .el-aside {
-  line-height: 320px;
+.item {
+  margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+
+.box-card {
+  width: 480px;
 }
 </style>
