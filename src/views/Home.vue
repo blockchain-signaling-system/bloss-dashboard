@@ -9,9 +9,16 @@
     />
     <el-container v-loading="!isConnected">
       <el-header></el-header>
-      <el-main>
+      <el-main> <b-tooltip label="Tooltip right"
+            position="is-right">
+            <button class="button is-dark is-twitter">
+                Right
+            </button>
+        </b-tooltip>
+
         <div>
-          <el-card class="box-card" shadow="hover" >
+          <el-card style="text-align:left;" class="box-card" shadow="hover">
+            
             <div slot="header" class="clearfix">
               <span>Status</span>
               <!-- <el-button style="float: right; padding: 3px 0" type="text">Operation button</el-button> -->
@@ -31,63 +38,23 @@
               <br>
               <a-badge :status="serviceStatusBloss ? 'success' : 'error'"/>
               <el-tag :type="serviceStatusBloss ? 'success' : 'danger'" size="mini">BLOSS</el-tag>
-              <el-button
-                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
-                @click="killService('bloss')"
-                size="mini"
-                round
-              >Stop</el-button>
-              <el-button
-                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
-                @click="startService('bloss')"
-                size="mini"
-                round
-              >Start</el-button>
+              <el-button @click="killService('bloss')" size="mini" round>Stop</el-button>
+              <el-button @click="startService('bloss')" size="mini" round>Start</el-button>
               <br>
               <a-badge :status="serviceStatusGeth ? 'success' : 'error'"/>
               <el-tag :type="serviceStatusGeth ? 'success' : 'danger'" size="mini">GETH</el-tag>
-              <el-button
-                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
-                @click="killService('geth')"
-                size="mini"
-                round
-              >Stop</el-button>
-              <el-button
-                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
-                @click="startService('geth')"
-                size="mini"
-                round
-              >Start</el-button>
+              <el-button @click="killService('geth')" size="mini" round>Stop</el-button>
+              <el-button @click="startService('geth')" size="mini" round>Start</el-button>
               <br>
               <a-badge :status="serviceStatusIPFS ? 'success' : 'error'"/>
               <el-tag :type="serviceStatusIPFS ? 'success' : 'danger'" size="mini">IPFS</el-tag>
-              <el-button
-                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
-                @click="killService('ipfs')"
-                size="mini"
-                round
-              >Stop</el-button>
-              <el-button
-                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
-                @click="startService('ipfs')"
-                size="mini"
-                round
-              >Start</el-button>
+              <el-button @click="killService('ipfs')" size="mini" round>Stop</el-button>
+              <el-button @click="startService('ipfs')" size="mini" round>Start</el-button>
               <br>
               <a-badge :status="serviceStatusInfluxDB ? 'success' : 'error'"/>
               <el-tag :type="serviceStatusInfluxDB ? 'success' : 'danger'" size="mini">INFLUXDB</el-tag>
-              <el-button
-                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
-                @click="killService('influxdb')"
-                size="mini"
-                round
-              >Stop</el-button>
-              <el-button
-                style="background-color: #212936; border-color: #4D5766; color: #AFBDD1;"
-                @click="startService('influxdb')"
-                size="mini"
-                round
-              >Start</el-button>
+              <el-button @click="killService('influxdb')" size="mini" round>Stop</el-button>
+              <el-button @click="startService('influxdb')" size="mini" round>Start</el-button>
               <br>
             </div>
             <!-- <div v-for="o in 4" :key="o" class="text item">{{'List item ' + o }}</div> -->
@@ -113,7 +80,8 @@ export default {
       serviceStatusBloss: false,
       serviceStatusGeth: false,
       serviceStatusIPFS: false,
-      serviceStatusInfluxDB: false
+      serviceStatusInfluxDB: false,
+      radio2: 3
     };
   },
   computed: {
@@ -217,15 +185,15 @@ export default {
 <style>
 .el-header,
 .el-footer {
-  background-color: #2b3648;
+  background-color: #e0e0e0;
 }
 
 .el-main {
-  background-color: #212936;
+  background-color: #f5f5f5;
 }
 
 .dark-button {
-  background-color: #212936;
+  background-color: #e0e0e0;
 }
 
 .text {
