@@ -11,7 +11,19 @@
       <div class="container">
         <h1 class="title">BLOSS</h1>
         <div class="columns">
-          <div class="column">First Column</div>
+          <div class="column">
+            <mitigation-request
+              v-for="mit in mitigationRequests"
+              v-bind:key="mit.key"
+              v-bind:requestType="mit.requestType"
+              v-bind:requestorHostname="mit.requestorHostname"
+              v-bind:requestorReputation="mit.requestorReputation"
+              v-bind:requestorIP="mit.requestorIP"
+              v-bind:attackAttackers="mit.attackAttackers"
+              v-bind:attackDomains="mit.attackDomains"
+              v-bind:incomingDate="getDate()"
+            ></mitigation-request>
+          </div>
           <div class="column">Second Column</div>
           <div class="column">Third Column</div>
           <div class="column">
@@ -33,11 +45,6 @@
                         <a-badge :status="isConnected ? 'success' : 'error'"/>
                         <el-tag :type="isConnected ? 'success' : 'danger'" size="mini">WEBSOCKET</el-tag>
                         <br>
-                        <!-- <a-badge :status="isControllerAvailable ? 'success' : 'error'"/>
-                        <el-tag
-                          :type="isControllerAvailable ? 'success' : 'danger'"
-                          size="mini"
-                        >CONTROLLER</el-tag> -->
                       </p>
                       <hr>
                       <div v-show="isConnected">
@@ -83,7 +90,7 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import MitigationRequest from "@/components/MitigationRequest.vue";
 
 export default {
   data() {
@@ -97,7 +104,26 @@ export default {
       serviceStatusGeth: false,
       serviceStatusIPFS: false,
       serviceStatusInfluxDB: false,
-      radio2: 3
+      mitigationRequests: [
+        {
+          key: "123",
+          requestType: "MITIGATION REQUEST",
+          requestorHostname: "NODE 001",
+          requestorReputation: 3234,
+          requestorIP: "192.168.10.2",
+          attackAttackers: 33,
+          attackDomains: 233
+        },
+        {
+          key: "123",
+          requestType: "MITIGATION REQUEST",
+          requestorHostname: "NODE 001",
+          requestorReputation: 3234,
+          requestorIP: "192.168.10.2",
+          attackAttackers: 33,
+          attackDomains: 233
+        }
+      ]
     };
   },
   computed: {
@@ -165,6 +191,9 @@ export default {
       // Send the "pingServer" event to the server.
       this.$socket.emit("getUptime", "uptime");
     },
+    getDate() {
+      return new Date();
+    },
     toggleStatusPolling() {
       this.$socket.emit("statusPolling", "toggle");
     },
@@ -192,7 +221,7 @@ export default {
   },
   name: "home",
   components: {
-    HelloWorld
+    MitigationRequest
   }
 };
 //#
