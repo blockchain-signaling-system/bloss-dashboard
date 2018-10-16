@@ -29,6 +29,7 @@
           <div class="column">
             <el-container v-loading="!isConnected">
               <div class="box">
+                
                 <article class="media">
                   <div class="media-content">
                     <div class="media-title">System Status</div>
