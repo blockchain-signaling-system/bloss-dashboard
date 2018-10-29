@@ -160,9 +160,11 @@ export default {
         if (data.bloss === "active") this.updateStatus("bloss", true);
         if (data.bloss === "inactive") this.updateStatus("bloss", false);
       }
-
       console.log(data);
       this.statusMessage = data;
+    },
+    reportChannel(data){
+      console.log(data);
     }
   },
   methods: {
