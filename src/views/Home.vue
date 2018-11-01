@@ -15,13 +15,12 @@
             <mitigation-request
               v-for="mit in mitigationRequests"
               v-bind:key="mit.key"
-              v-bind:requestType="mit.requestType"
-              v-bind:requestorHostname="mit.requestorHostname"
-              v-bind:requestorReputation="mit.requestorReputation"
-              v-bind:requestorIP="mit.requestorIP"
-              v-bind:attackAttackers="mit.attackAttackers"
-              v-bind:attackDomains="mit.attackDomains"
-              v-bind:incomingDate="getDate()"
+              v-bind:hash="mit.hash"
+              v-bind:target="mit.target"
+              v-bind:timestamp="mit.timestamp"
+              v-bind:action="mit.action"
+              v-bind:subnetwork="mit.subnetwork"
+              v-bind:addresses="mit.addresses"
             ></mitigation-request>
           </div>
           <div class="column">Second Column</div>
@@ -29,18 +28,10 @@
           <div class="column">
             <el-container v-loading="!isConnected">
               <div class="box">
-                
                 <article class="media">
                   <div class="media-content">
                     <div class="media-title">System Status</div>
                     <br>
-                    <div class="field">
-                      <b-switch
-                        v-model="statusPollingActive"
-                        :disabled="(isConnected) ? false:true"
-                        size="is-small"
-                      >Status Polling</b-switch>
-                    </div>
                     <div class="content">
                       <p>
                         <a-badge :status="isConnected ? 'success' : 'error'"/>
@@ -100,31 +91,11 @@ export default {
       isControllerAvailable: false,
       socketMessage: "",
       statusMessage: "",
-      statusPollingActive: false,
       serviceStatusBloss: false,
       serviceStatusGeth: false,
       serviceStatusIPFS: false,
       serviceStatusInfluxDB: false,
-      mitigationRequests: [
-        {
-          key: "123",
-          requestType: "MITIGATION REQUEST",
-          requestorHostname: "NODE 001",
-          requestorReputation: 3234,
-          requestorIP: "192.168.10.2",
-          attackAttackers: 33,
-          attackDomains: 233
-        },
-        {
-          key: "123",
-          requestType: "MITIGATION REQUEST",
-          requestorHostname: "NODE 001",
-          requestorReputation: 3234,
-          requestorIP: "192.168.10.2",
-          attackAttackers: 33,
-          attackDomains: 233
-        }
-      ]
+      mitigationRequests: []
     };
   },
   computed: {
@@ -145,6 +116,7 @@ export default {
     },
     // Fired when the server sends something on the "messageChannel" channel.
     isControllerAvailable(data) {
+      console.log("got isControllerAvailable from backend", data);
       this.isControllerAvailable = data.isControllerAvailable;
     },
     statusChannel(data) {
@@ -163,8 +135,22 @@ export default {
       console.log(data);
       this.statusMessage = data;
     },
-    reportChannel(data){
+    reportChannel(data) {
       console.log(data);
+      // Add new reports to the array "MitigationRequests"
+      console.log(JSON.stringify(data, null, 2));
+
+      var attack_report = {
+        key: data.data._id,
+        hash: data.data.hash,
+        target: data.data.target,
+        timestamp: data.data.timestamp,
+        action: data.data.action,
+        subnetwork: data.data.subnetwork,
+        addresses: data.data.addresses
+      };
+      this.mitigationRequests.push(attack_report);
+      console.log(attack_report);
     }
   },
   methods: {
@@ -197,11 +183,8 @@ export default {
     getDate() {
       return new Date();
     },
-    toggleStatusPolling() {
-      this.$socket.emit("statusPolling", "toggle");
-    },
     fetchControllerStatus() {
-      this.$socket.emit("isControllerAvailable", "toggle");
+      this.$socket.emit("isControllerAvailableRequest", "toggle");
     },
     getStatus() {
       // Send the "pingServer" event to the server.
@@ -215,9 +198,6 @@ export default {
     }
   },
   watch: {
-    statusPollingActive: function() {
-      this.toggleStatusPolling();
-    },
     isConnected: function() {
       this.fetchControllerStatus();
     }
