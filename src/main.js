@@ -18,8 +18,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
  
 library.add(fas);
 library.add(faEthereum);
-//library.add(freeBrands);
-//library.add(freeRegular);
 
 Vue.prototype.moment = moment;
 

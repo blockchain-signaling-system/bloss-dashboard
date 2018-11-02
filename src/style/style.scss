@@ -1,39 +1,73 @@
-// Import _all of bulma
-// @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,500,700');
-// @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,500,700|Source+Sans+Pro');
-@import "../../node_modules/bulma/sass/utilities/_all.sass";
-@import "~bulma/sass/utilities/_all";
-/**
-* Below are all variables that overwrite the default bulma theme.
-**/
 
-// Fonts
-//font-family: 'Source Code Pro', monospace;
-//font-family: 'Source Sans Pro', sans-serif;
+@import "~bulma/sass/utilities/all";
 
-// $family-sans-serif: 'Source Sans Pro', sans-serif;
-// $family-monospace: 'Source Code Pro', monospace;
-// $family-primary: 'Source Code Pro', monospace;
-// $body-family:'Source Code Pro', monospace;
-// Set your colors
+@font-face {
+  font-family: "Source Code Pro ExtraLight";
+  src: url("../assets/fonts/TTF/SourceCodePro-ExtraLight.ttf")
+    format("truetype");
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Code Pro Light";
+  src: url("../assets/fonts/TTF/SourceCodePro-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Code Pro Regular";
+  src: url("../assets/fonts/TTF/SourceCodePro-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Code Pro Medium";
+  src: url("../assets/fonts/TTF/SourceCodePro-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Code Pro Semibold";
+  src: url("../assets/fonts/TTF/SourceCodePro-Semibold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Code Pro Bold";
+  src: url("../assets/fonts/TTF/SourceCodePro-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Code Pro Black";
+  src: url("../assets/fonts/TTF/SourceCodePro-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+$family-sans-serif: "Source Code Pro Regular", monospace;
+$family-monospace: "Source Code Pro Regular", monospace;
+$family-primary: "Source Code Pro Regular", monospace;
+$body-family: "Source Code Pro Regular", monospace;
+
 $primary: #989898;
 $primary-invert: findColorInvert($primary);
-$twitter: #4099FF;
+$twitter: #fcff40;
 $twitter-invert: findColorInvert($twitter);
 
-// Setup $colors to use as bulma classes (e.g. 'is-twitter')
-// $colors: (
-//     "white": ($white, $black),
-//     "black": ($black, $white),
-//     "light": ($light, $light-invert),
-//     "dark": ($dark, $dark-invert),
-//     "primary": ($primary, $primary-invert),
-//     "info": ($info, $info-invert),
-//     "success": ($success, $success-invert),
-//     "warning": ($warning, $warning-invert),
-//     "danger": ($danger, $danger-invert),
-//     "twitter": ($twitter, $twitter-invert)
-// );
+$colors: (
+    "white": ($white, $black),
+    "black": ($black, $white),
+    "light": ($light, $light-invert),
+    "dark": ($dark, $dark-invert),
+    "primary": ($primary, $primary-invert),
+    "info": ($info, $info-invert),
+    "success": ($success, $success-invert),
+    "warning": ($warning, $warning-invert),
+    "danger": ($danger, $danger-invert),
+    "twitter": ($twitter, $twitter-invert)
+);
+
 
 // Navbar
 $navbar-height: 5rem; // default 3.25
@@ -44,10 +78,6 @@ $link-invert: $primary-invert;
 $link-focus-border: $primary;
 
 // Import Bulma and Buefy styles
-// Import Bulma and Buefy styles
-// @import "~bulma/sass/utilities/_all";
-// @import "~bulma";
-// @import "~buefy/src/scss/buefy";
-@import "../../node_modules/bulma/sass/utilities/_all.sass";
-@import "../../node_modules/bulma/";
-@import "../../node_modules/buefy/src/scss/buefy";
+@import "~bulma/sass/utilities/_all";
+@import "~bulma";
+@import "~buefy/src/scss/buefy";

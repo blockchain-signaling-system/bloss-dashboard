@@ -1,29 +1,55 @@
 <template>
-  <div class="box">
-    <!-- <span class="tag is-twitter">{{moment(this.timestamp).format('hh:mm:ss a')}}</span> -->
-    <font-awesome-icon icon="file-code"/>
-    <span>{{this.hash}}</span>
-    <br>
-    <font-awesome-icon icon="clock"/>
-    <span>{{this.timestamp}}</span>
-    <br>
-    <span>{{this.action}}</span>
-    <br>
-    <font-awesome-icon icon="layer-group"/>
-    <span>{{this.subnetwork}}</span>
-    <br>
-    <font-awesome-icon icon="bug"/>
-    <span>{{this.addresses}}</span>
-    <br>
-    <font-awesome-icon icon="shield-alt"/>
-    <span>{{this.target}}</span>
-    <br>
-    <font-awesome-icon :icon="['fab', 'ethereum']"/>
-    <span>TODO: Mock Payment / Incentive</span>
-    <br>
-    <font-awesome-icon icon="star-half-alt"/>
-    <span>TODO: Mock Rating</span>
-    <br>
+  <div style="margin-left:0.1em;margin-right:0.1em;margin-bottom:1em" class="box">
+    <b-tag style="margin-left:0em" type="is-twitter">MREQ</b-tag>
+    <span style="margin-left:0em" class="tag">
+      <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
+      {{this.hash}}
+    </span>
+    <b-tag style="margin-left:0em; margin-top:0.5em" class="tag" type="is-grey">
+      <font-awesome-icon icon="clock" style="margin-right:0.25em"/>
+      {{moment(this.timestamp).format('hh:mm:ss a')}}
+    </b-tag>
+    <hr>
+
+    <p class="heading">TARGET</p>
+    <p style="margin-bottom:0;padding-bottom:0;" class="subtitle">
+      {{this.target}}
+      <br>
+      <span>
+        <font-awesome-icon style="margin-right:.25em" :icon="['fab', 'ethereum']"/>0.0434 ETH
+      </span>
+      <span>
+        <font-awesome-icon style="margin-right:.25em" icon="star-half-alt"/>65% Reputation
+      </span>
+    </p>
+    <hr>
+    <p class="heading">ATTACK ORIGIN</p>
+    <p style="margin-bottom:0;padding-bottom:0;" class="subtitle">
+      {{this.subnetwork}}
+      <br>
+      <span>
+        <font-awesome-icon style="margin-right:.25em" icon="shield-alt"/>
+        {{this.action}}
+      </span>
+      <br>
+      <span>
+        <font-awesome-icon style="margin-right:.25em" icon="bug"/>
+        {{this.addresses.length}} Attackers
+      </span>
+    </p>
+    <p>
+    <el-button-group>
+      <el-button size="mini">
+        <font-awesome-icon icon="times" style="margin-right:0.25em"/>
+      </el-button>
+      <el-button size="mini">
+        <font-awesome-icon icon="check" style="margin-right:0.25em"/>
+      </el-button>
+      <el-button size="mini">Details
+        <font-awesome-icon icon="search-plus" style="margin-right:0.25em"/>
+      </el-button>
+    </el-button-group>
+    </p>
   </div>
 </template>
 
@@ -36,7 +62,9 @@ export default {
     timestamp: String,
     action: String,
     subnetwork: String,
-    addresses: [String]
+    addresses: {
+      type: Array
+    }
   }
 };
 </script>
@@ -46,6 +74,19 @@ export default {
 span {
   margin-left: 0.5em;
   font-size: 12px;
-  font-family: 'Source Code Pro Regular';
+  font-family: "Source Code Pro Regular";
+}
+hr {
+  display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-left: auto;
+  margin-right: auto;
+  border-style: inset;
+  border-width: 0.6px;
+  color: #efefef;
+}
+p {
+  margin:.5em 0 .5em 0
 }
 </style>

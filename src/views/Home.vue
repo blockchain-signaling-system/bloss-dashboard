@@ -1,87 +1,172 @@
 <template>
   <div>
-    <a-alert
-      message="Websocket connection lost"
-      description="Trying to reconnect."
-      type="warning"
-      showIcon
-      v-if="!isConnected"
-    />
     <section class="section">
       <div class="container">
         <h1 class="title">BLOSS</h1>
-        <div class="columns">
-          <div class="column">
-            <mitigation-request
-              v-for="mit in mitigationRequests"
-              v-bind:key="mit.key"
-              v-bind:hash="mit.hash"
-              v-bind:target="mit.target"
-              v-bind:timestamp="mit.timestamp"
-              v-bind:action="mit.action"
-              v-bind:subnetwork="mit.subnetwork"
-              v-bind:addresses="mit.addresses"
-            ></mitigation-request>
-          </div>
-          <div class="column">Second Column</div>
-          <div class="column">Third Column</div>
-          <div class="column">
-            <el-container v-loading="!isConnected">
-              <div class="box">
+        <el-tabs tab-position="top" style="height: 200px;">
+          <el-tab-pane label="INCOMING">
+            <span slot="label">
+              <font-awesome-icon icon="inbox" style="margin-right:0.25em"/>INCOMING
+            </span>
+            <div class="columns">
+              <div class="column">
+                <p class="col-title">REQUESTS</p>
+                <mitigation-request
+                  v-for="mit in mitigationRequests"
+                  v-bind:key="mit.key"
+                  v-bind:hash="mit.hash"
+                  v-bind:target="mit.target"
+                  v-bind:timestamp="mit.timestamp"
+                  v-bind:action="mit.action"
+                  v-bind:subnetwork="mit.subnetwork"
+                  v-bind:addresses="mit.addresses"
+                ></mitigation-request>
+              </div>
+              <div class="column">
+                <p class="col-title">PROCESSING</p>
+              </div>
+              <div class="column">
+                <p class="col-title">LOG</p>
+              </div>
+              <div class="column">
+                <p class="col-title">SYSTEM STATUS</p>
                 <article class="media">
                   <div class="media-content">
-                    <div class="media-title">System Status</div>
-                    <br>
                     <div class="content">
                       <p>
-                        <a-badge :status="isConnected ? 'success' : 'error'"/>
-                        <el-tag :type="isConnected ? 'success' : 'danger'" size="mini">WEBSOCKET</el-tag>
-                        <br>
+                        <a-badge :status="isConnected ? 'success' : 'warning'"/>
+                        <b-tooltip
+                          :label="isConnected ? 'WSConn to bloss-node instance successful.' : 'Establishing connection...'"
+                          position="is-top"
+                          animated
+                          :type="isConnected ? 'is-success' : 'is-warning'" 
+                        >
+                          <b-tag
+                            style="height:2.3em;margin-left:0em;"
+                            class="tag"
+                            :type="isConnected ? 'is-success' : 'is-warning'"
+                          >WEBSOCKET</b-tag>
+                        </b-tooltip>
+                        <span>
+                          <font-awesome-icon v-show="!isConnected" icon="spinner" pulse/>
+                        </span>
                       </p>
                       <p>
-                        <a-badge :status="isControllerAvailable ? 'success' : 'error'"/>
-                        <el-tag :type="isControllerAvailable ? 'success' : 'danger'" size="mini">CONTROLLER</el-tag>
-                        <br>
-                        <font-awesome-icon icon="spinner" spin /><br>
-                        <font-awesome-icon icon="spinner" pulse /><br>
+                        <a-badge :status="isControllerAvailable ? 'success' : 'warning'"/>
+                        <b-tag
+                          style="height:2.3em;margin-left:0em;"
+                          class="tag"
+                          :type="isControllerAvailable ? 'is-success' : 'is-warning'"
+                        >CONTROLLER</b-tag>
+                        <span>
+                          <font-awesome-icon v-show="!isControllerAvailable" icon="spinner" pulse/>
+                        </span>
                       </p>
-                      <hr>
-                      <div v-show="isConnected">
+                      <div v-show="isControllerAvailable">
                         <div class="tile">
                           <a-badge :status="serviceStatusBloss ? 'success' : 'error'"/>
-                          <el-tag
-                            :type="serviceStatusBloss ? 'success' : 'danger'"
-                            size="mini"
-                          >BLOSS</el-tag>
-                          <el-button @click="killService('bloss')" size="mini" round>Stop</el-button>
-                          <el-button @click="startService('bloss')" size="mini" round>Start</el-button>
-                          <br>
+                          <b-tag
+                            style="height:2.3em;margin-left:0em;"
+                            class="tag"
+                            :type="serviceStatusBloss ? 'is-success' : 'is-warning'"
+                          >BLOSS
+                            <font-awesome-icon
+                              :icon="serviceStatusBloss ? 'check' : 'pause-circle'"
+                              style="margin-right:0.25em"
+                            />
+                          </b-tag>
+                          <el-button-group>
+                            <el-button style="padding=0.25em" size="mini">
+                              <font-awesome-icon
+                                @click="startService('bloss')"
+                                icon="play"
+                                style="margin-right:0.25em"
+                              />
+                            </el-button>
+                            <el-button size="mini">
+                              <font-awesome-icon
+                                @click="killService('bloss')"
+                                icon="stop"
+                                style="margin-right:0.25em"
+                              />
+                            </el-button>
+                          </el-button-group>
                         </div>
                         <a-badge :status="serviceStatusGeth ? 'success' : 'error'"/>
-                        <el-tag :type="serviceStatusGeth ? 'success' : 'danger'" size="mini">GETH</el-tag>
-                        <el-button @click="killService('geth')" size="mini" round>Stop</el-button>
-                        <el-button @click="startService('geth')" size="mini" round>Start</el-button>
+                        <b-tag
+                          style="height:2.3em;margin-left:0em;"
+                          class="tag"
+                          :type="serviceStatusGeth ? 'is-success' : 'is-warning'"
+                        >GETH
+                          <font-awesome-icon
+                            :icon="serviceStatusGeth ? 'check' : 'pause-circle'"
+                            style="margin-right:0.25em"
+                          />
+                        </b-tag>
+                        <el-button-group>
+                          <el-button style="padding=0.25em" size="mini">
+                            <font-awesome-icon
+                              @click="startService('geth')"
+                              icon="play"
+                              style="margin-right:0.25em"
+                            />
+                          </el-button>
+                          <el-button size="mini">
+                            <font-awesome-icon
+                              @click="killService('geth')"
+                              icon="stop"
+                              style="margin-right:0.25em"
+                            />
+                          </el-button>
+                        </el-button-group>
                         <br>
                         <a-badge :status="serviceStatusIPFS ? 'success' : 'error'"/>
-                        <el-tag :type="serviceStatusIPFS ? 'success' : 'danger'" size="mini">IPFS</el-tag>
-                        <el-button @click="killService('ipfs')" size="mini" round>Stop</el-button>
-                        <el-button @click="startService('ipfs')" size="mini" round>Start</el-button>
-                        <br>
-                        <a-badge :status="serviceStatusInfluxDB ? 'success' : 'error'"/>
-                        <el-tag
-                          :type="serviceStatusInfluxDB ? 'success' : 'danger'"
-                          size="mini"
-                        >INFLUXDB</el-tag>
-                        <el-button @click="killService('influxdb')" size="mini" round>Stop</el-button>
-                        <el-button @click="startService('influxdb')" size="mini" round>Start</el-button>
+                        <b-tag
+                          style="height:2.3em;margin-left:0em;"
+                          class="tag"
+                          :type="serviceStatusIPFS ? 'is-success' : 'is-warning'"
+                        >IPFS
+                          <font-awesome-icon
+                            :icon="serviceStatusIPFS ? 'check' : 'pause-circle'"
+                            style="margin-right:0.25em"
+                          />
+                        </b-tag>
+                        <el-button-group>
+                          <el-button style="padding=0.25em" size="mini">
+                            <font-awesome-icon
+                              @click="startService('ipfs')"
+                              icon="play"
+                              style="margin-right:0.25em"
+                            />
+                          </el-button>
+                          <el-button size="mini">
+                            <font-awesome-icon
+                              @click="killService('ipfs')"
+                              icon="stop"
+                              style="margin-right:0.25em"
+                            />
+                          </el-button>
+                        </el-button-group>
                       </div>
                     </div>
                   </div>
                 </article>
               </div>
-            </el-container>
-          </div>
-        </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="OUTGOING">
+            TODO
+            <span slot="label">
+              <font-awesome-icon icon="share-square" style="margin-right:0.25em"/>OUTGOING
+            </span>
+          </el-tab-pane>
+          <el-tab-pane label="CONFIG">
+            TODO
+            <span slot="label">
+              <font-awesome-icon icon="cogs" style="margin-right:0.25em"/>CONFIG
+            </span>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </section>
   </div>
@@ -210,8 +295,16 @@ export default {
 </script>
 
 <style>
-.section{
-  font-family: 'Source Code Pro Regular';
+.col-title {
+  font-family: "Source Code Pro Bold";
+  font-size: 1rem;
+}
+.section {
+  font-family: "Source Code Pro Regular";
+}
+
+.el-container {
+  padding: 0.1em;
 }
 
 .el-header,
@@ -247,51 +340,12 @@ export default {
 .box-card {
   width: 480px;
 }
-
 </style>
 <style lang="scss">
-
 @import "../style/style";
 
-@import '~bulma/sass/utilities/all';
-
-// url("#../assets/fonts/WOFF2/OTF/SourceCodePro-Regular.otf.woff2") format("woff2"),
-//     url("#../assets/fonts/WOFF/OTF/SourceCodePro-Regular.otf.woff") format("woff"),
-@font-face {
-  font-family: "Source Code Pro Regular";
-  src: url("../assets/fonts/TTF/SourceCodePro-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
+span {
+  margin-left: 0.25em;
+  margin-right: 0.25em;
 }
-
-
-$family-sans-serif: 'Source Code Pro Regular', monospace;
-$family-monospace: 'Source Code Pro Regular', monospace;
-$family-primary: 'Source Code Pro Regular', monospace;
-$body-family: 'Source Code Pro Regular', monospace;
-
-// @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,500,700');
-// @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,500,700|Source+Sans+Pro');
-// $family-sans-serif: 'Source Sans Pro', sans-serif;
-// $family-monospace: 'Source Code Pro', monospace;
-// $family-primary: 'Source Code Pro', monospace;
-// $body-family:'Source Code Pro', monospace;
-$primary: #989898;
-$primary-invert: findColorInvert($primary);
-$twitter: #4099FF;
-$twitter-invert: findColorInvert($twitter);
-
-// Navbar
-$navbar-height: 5rem; // default 3.25
-
-// Links
-$link: $primary;
-$link-invert: $primary-invert;
-$link-focus-border: $primary;
-
-// Import Bulma and Buefy styles
-@import "~bulma/sass/utilities/_all";
-@import "~bulma";
-@import "~buefy/src/scss/buefy";
-
 </style>
