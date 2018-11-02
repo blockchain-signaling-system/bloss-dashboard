@@ -12,11 +12,12 @@ import { Card, Badge, Alert, Switch, Button } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-//import { fas } from '@fortawesome/free-brands-svg-icons';
+import { faEthereum } from '@fortawesome/free-brands-svg-icons';
 //import  fas  from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
  
 library.add(fas);
+library.add(faEthereum);
 //library.add(freeBrands);
 //library.add(freeRegular);
 

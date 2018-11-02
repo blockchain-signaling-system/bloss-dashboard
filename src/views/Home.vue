@@ -42,6 +42,8 @@
                         <a-badge :status="isControllerAvailable ? 'success' : 'error'"/>
                         <el-tag :type="isControllerAvailable ? 'success' : 'danger'" size="mini">CONTROLLER</el-tag>
                         <br>
+                        <font-awesome-icon icon="spinner" spin /><br>
+                        <font-awesome-icon icon="spinner" pulse /><br>
                       </p>
                       <hr>
                       <div v-show="isConnected">
@@ -154,6 +156,7 @@ export default {
         subnetwork: data.data.subnetwork,
         addresses: data.data.addresses
       };
+
       this.mitigationRequests.push(attack_report);
       console.log(attack_report);
     }
@@ -207,6 +210,10 @@ export default {
 </script>
 
 <style>
+.section{
+  font-family: 'Source Code Pro Regular';
+}
+
 .el-header,
 .el-footer {
   background-color: #e0e0e0;
@@ -221,7 +228,7 @@ export default {
 }
 
 .text {
-  font-size: 14px;
+  font-size: 10px;
 }
 
 .item {
@@ -240,4 +247,51 @@ export default {
 .box-card {
   width: 480px;
 }
+
+</style>
+<style lang="scss">
+
+@import "../style/style";
+
+@import '~bulma/sass/utilities/all';
+
+// url("#../assets/fonts/WOFF2/OTF/SourceCodePro-Regular.otf.woff2") format("woff2"),
+//     url("#../assets/fonts/WOFF/OTF/SourceCodePro-Regular.otf.woff") format("woff"),
+@font-face {
+  font-family: "Source Code Pro Regular";
+  src: url("../assets/fonts/TTF/SourceCodePro-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+$family-sans-serif: 'Source Code Pro Regular', monospace;
+$family-monospace: 'Source Code Pro Regular', monospace;
+$family-primary: 'Source Code Pro Regular', monospace;
+$body-family: 'Source Code Pro Regular', monospace;
+
+// @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,500,700');
+// @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,500,700|Source+Sans+Pro');
+// $family-sans-serif: 'Source Sans Pro', sans-serif;
+// $family-monospace: 'Source Code Pro', monospace;
+// $family-primary: 'Source Code Pro', monospace;
+// $body-family:'Source Code Pro', monospace;
+$primary: #989898;
+$primary-invert: findColorInvert($primary);
+$twitter: #4099FF;
+$twitter-invert: findColorInvert($twitter);
+
+// Navbar
+$navbar-height: 5rem; // default 3.25
+
+// Links
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+// Import Bulma and Buefy styles
+@import "~bulma/sass/utilities/_all";
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
 </style>
