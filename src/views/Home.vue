@@ -38,6 +38,11 @@
                         <el-tag :type="isConnected ? 'success' : 'danger'" size="mini">WEBSOCKET</el-tag>
                         <br>
                       </p>
+                      <p>
+                        <a-badge :status="isControllerAvailable ? 'success' : 'error'"/>
+                        <el-tag :type="isControllerAvailable ? 'success' : 'danger'" size="mini">CONTROLLER</el-tag>
+                        <br>
+                      </p>
                       <hr>
                       <div v-show="isConnected">
                         <div class="tile">
@@ -117,7 +122,7 @@ export default {
     // Fired when the server sends something on the "messageChannel" channel.
     isControllerAvailable(data) {
       console.log("got isControllerAvailable from backend", data);
-      this.isControllerAvailable = data.isControllerAvailable;
+      this.isControllerAvailable = data.controllerAvailability;
     },
     statusChannel(data) {
       if (data.geth != null) {
@@ -174,7 +179,6 @@ export default {
       this.serviceStatusBloss = status.bloss;
       this.serviceStatusGeth = status.geth;
       this.serviceStatusIPFS = status.ipfs;
-      this.serviceStatusInfluxDB = status.influxdb;
     },
     getUptime() {
       // Send the "pingServer" event to the server.
@@ -182,9 +186,6 @@ export default {
     },
     getDate() {
       return new Date();
-    },
-    fetchControllerStatus() {
-      this.$socket.emit("isControllerAvailableRequest", "toggle");
     },
     getStatus() {
       // Send the "pingServer" event to the server.
@@ -195,11 +196,6 @@ export default {
     },
     killService(servicename) {
       this.$socket.emit("serviceCtl", { cmd: "stop", service: servicename });
-    }
-  },
-  watch: {
-    isConnected: function() {
-      this.fetchControllerStatus();
     }
   },
   name: "home",
