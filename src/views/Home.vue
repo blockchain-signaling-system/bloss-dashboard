@@ -10,9 +10,19 @@
             </span>
             <div class="columns">
               <div class="column">
-                <p class="col-title">REQUESTS</p>
+                <p style="margin-top:1em">
+                  <el-badge
+                    :hidden="this.mitigationRequests.length == 0 ? true:false"
+                    class="item"
+                    is-dot
+                  >
+                    <p class="col-title">REQUESTS</p>
+                  </el-badge>
+                </p>
                 <mitigation-request
-                  @showRequestDetails="showDetails"
+                  @showRequestDetailsEvent="showDetails"
+                  @declineMREQEvent="declineMREQ"
+                  @acceptMREQEvent="acceptMREQ"
                   v-for="mit in mitigationRequests"
                   v-bind:key="mit.key"
                   v-bind:hash="mit.hash"
@@ -30,20 +40,57 @@
                   <div class="card">
                     <div class="card-content">
                       <div class="media">
-                        <div class="media-left"></div>
-                        <div class="media-content">
-                          <p class="title is-4">{{this.mitigationRequests[detailAttackReportIndex]}}</p>
-                          <p class="subtitle is-6">@johnsmith</p>
+                        <div class="media-left">
+                          <b-tag style="margin-left:0em" type="is-twitter">MREQ</b-tag>
+                          <b-tag
+                            style="margin-left:0em"
+                            type="is-status"
+                          >{{this.detailAttackReport.status}}</b-tag>
+                          <span style="margin-left:0em" class="tag">
+                            <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
+                            {{this.detailAttackReport.hash}}
+                          </span>
                         </div>
                       </div>
+                      <div class="media-content">
+                        <p class="title">
+                          MITIGATION REQUEST
+                          <small>{{moment(this.detailAttackReport.timestamp).format('hh:mm:ss a')}}</small>
+                        </p>
+                        <el-steps
+                          :active="1"
+                          finish-status="success"
+                          simple
+                          style="margin-top: 20px"
+                        >
+                          <el-step title="S1" description="T_REQUESTS"></el-step>
+                          <el-step title="S2" description="M_APPROVES|M_ABORT"></el-step>
+                          <el-step title="S3"></el-step>
+                        </el-steps>
+                        <p style="margin-top:1em; margin-bottom: 0.5em;" class="subtitle">TARGET</p>
+                        <p>IP: {{this.detailAttackReport.target}}</p>
+                        <p>REPUTATION:
+                          <font-awesome-icon style="margin-right:.25em" icon="star-half-alt"/>65%
+                          <el-progress :percentage="65" status="success"></el-progress>
+                        </p>
+                      </div>
                       <div class="content">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Phasellus nec iaculis mauris.
-                        <a>@bulmaio</a>.
-                        <a>#css</a>
-                        <a>#responsive</a>
-                        <br>
-                        <small>11:09 PM - 1 Jan 2016</small>
+                        <p
+                          style="margin-bottom: 0.5em;margin-top:1em"
+                          class="subtitle"
+                        >ATTACK DETAILS</p>
+                        <p>IPFS HASH: {{this.detailAttackReport.hash}}</p>
+                        <p>DEFENCE ACTION: {{this.detailAttackReport.action}}</p>
+                        <p>ATTACK ORIGIN SUBNETWORK: {{this.detailAttackReport.subnetwork}}</p>
+                        <p>ATTACK ORIGIN NODES: {{this.detailAttackReport.addresses}}</p>
+                        <el-button-group>
+                          <el-button v-on:click="declineMREQ()" size="mini">
+                            <font-awesome-icon icon="times" style="margin-right:0.25em"/>DECLINE
+                          </el-button>
+                          <el-button v-on:click="acceptMREQ()" size="mini">
+                            <font-awesome-icon icon="check" style="margin-right:0.25em"/>ACCEPT
+                          </el-button>
+                        </el-button-group>
                       </div>
                     </div>
                   </div>
@@ -214,7 +261,8 @@ export default {
       mitigationRequests: [],
       isImageModalActive: false,
       isCardModalActive: false,
-      detailAttackReportIndex: -1
+      detailAttackReportIndex: -1,
+      detailAttackReport: {}
     };
   },
   computed: {
@@ -296,16 +344,8 @@ export default {
       this.serviceStatusGeth = status.geth;
       this.serviceStatusIPFS = status.ipfs;
     },
-    getUptime() {
-      // Send the "pingServer" event to the server.
-      this.$socket.emit("getUptime", "uptime");
-    },
     getDate() {
       return new Date();
-    },
-    getStatus() {
-      // Send the "pingServer" event to the server.
-      this.$socket.emit("getStatus", "status");
     },
     startService(servicename) {
       this.$socket.emit("serviceCtl", { cmd: "start", service: servicename });
@@ -320,7 +360,24 @@ export default {
       ) {
         return object.hash === attackReportHash;
       });
+      this.detailAttackReport = this.mitigationRequests[
+        this.detailAttackReportIndex
+      ];
       this.isCardModalActive = true;
+    },
+    acceptMREQ(attackReportHash) {
+      if (attackReportHash == null) {
+        console.log("Accepting MREQ:" + this.detailAttackReport.hash);
+      } else {
+        console.log("Accepting MREQ:" + attackReportHash);
+      }
+    },
+    declineMREQ(attackReportHash) {
+      if (attackReportHash == null) {
+        console.log("Declining MREQ:" + this.detailAttackReport.hash);
+      } else {
+        console.log("Declining MREQ:" + attackReportHash);
+      }
     }
   },
   name: "home",

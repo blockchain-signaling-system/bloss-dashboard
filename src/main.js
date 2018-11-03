@@ -8,7 +8,7 @@ import ElementUI from 'element-ui';
 import './element-variables.scss'
 import Buefy from 'buefy';
 import moment from 'moment';
-import { Card, Badge, Alert, Switch, Button } from 'ant-design-vue';
+import { Card, Badge, Alert, Switch, Button, Steps } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -28,6 +28,7 @@ Vue.component(Card.name, Card);
 Vue.component(Alert.name, Alert);
 Vue.component(Switch.name, Switch);
 Vue.component(Button.name, Button);
+Vue.component(Steps.name, Steps);
 
 export const SocketInstance = socketio('http://localhost:3001');
 

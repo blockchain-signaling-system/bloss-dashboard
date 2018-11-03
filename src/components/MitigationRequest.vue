@@ -40,10 +40,10 @@
     </p>
     <p>
     <el-button-group>
-      <el-button size="mini">
+      <el-button v-on:click="declineMREQ()" size="mini">
         <font-awesome-icon icon="times" style="margin-right:0.25em"/>
       </el-button>
-      <el-button size="mini">
+      <el-button v-on:click="acceptMREQ()" size="mini">
         <font-awesome-icon icon="check" style="margin-right:0.25em"/>
       </el-button>
       
@@ -71,7 +71,15 @@ export default {
   },
   methods: {
     showDetails(){
-      this.$emit('showRequestDetails', this.hash);
+      this.$emit('showRequestDetailsEvent', this.hash);
+      // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
+    },
+    declineMREQ(){
+      this.$emit('declineMREQEvent', this.hash);
+      // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
+    },
+    acceptMREQ(){
+      this.$emit('acceptMREQEvent', this.hash);
       // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
     }
   }
