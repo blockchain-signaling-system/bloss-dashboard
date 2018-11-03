@@ -12,6 +12,7 @@
               <div class="column">
                 <p class="col-title">REQUESTS</p>
                 <mitigation-request
+                  @showRequestDetails="showDetails"
                   v-for="mit in mitigationRequests"
                   v-bind:key="mit.key"
                   v-bind:hash="mit.hash"
@@ -20,10 +21,33 @@
                   v-bind:action="mit.action"
                   v-bind:subnetwork="mit.subnetwork"
                   v-bind:addresses="mit.addresses"
+                  v-bind:status="mit.status"
                 ></mitigation-request>
               </div>
               <div class="column">
                 <p class="col-title">PROCESSING</p>
+                <b-modal :active.sync="isCardModalActive" :width="640" scroll="keep">
+                  <div class="card">
+                    <div class="card-content">
+                      <div class="media">
+                        <div class="media-left"></div>
+                        <div class="media-content">
+                          <p class="title is-4">{{this.mitigationRequests[detailAttackReportIndex]}}</p>
+                          <p class="subtitle is-6">@johnsmith</p>
+                        </div>
+                      </div>
+                      <div class="content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Phasellus nec iaculis mauris.
+                        <a>@bulmaio</a>.
+                        <a>#css</a>
+                        <a>#responsive</a>
+                        <br>
+                        <small>11:09 PM - 1 Jan 2016</small>
+                      </div>
+                    </div>
+                  </div>
+                </b-modal>
               </div>
               <div class="column">
                 <p class="col-title">LOG</p>
@@ -39,7 +63,7 @@
                           :label="isConnected ? 'WSConn to bloss-node instance successful.' : 'Establishing connection...'"
                           position="is-top"
                           animated
-                          :type="isConnected ? 'is-success' : 'is-warning'" 
+                          :type="isConnected ? 'is-success' : 'is-warning'"
                         >
                           <b-tag
                             style="height:2.3em;margin-left:0em;"
@@ -187,7 +211,10 @@ export default {
       serviceStatusGeth: false,
       serviceStatusIPFS: false,
       serviceStatusInfluxDB: false,
-      mitigationRequests: []
+      mitigationRequests: [],
+      isImageModalActive: false,
+      isCardModalActive: false,
+      detailAttackReportIndex: -1
     };
   },
   computed: {
@@ -239,7 +266,8 @@ export default {
         timestamp: data.data.timestamp,
         action: data.data.action,
         subnetwork: data.data.subnetwork,
-        addresses: data.data.addresses
+        addresses: data.data.addresses,
+        status: data.data.status
       };
 
       this.mitigationRequests.push(attack_report);
@@ -284,6 +312,15 @@ export default {
     },
     killService(servicename) {
       this.$socket.emit("serviceCtl", { cmd: "stop", service: servicename });
+    },
+    showDetails(attackReportHash) {
+      console.log("ShowDetails for hash " + attackReportHash + " called");
+      this.detailAttackReportIndex = this.mitigationRequests.findIndex(function(
+        object
+      ) {
+        return object.hash === attackReportHash;
+      });
+      this.isCardModalActive = true;
     }
   },
   name: "home",

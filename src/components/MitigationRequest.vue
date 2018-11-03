@@ -1,6 +1,7 @@
 <template>
   <div style="margin-left:0.1em;margin-right:0.1em;margin-bottom:1em" class="box">
     <b-tag style="margin-left:0em" type="is-twitter">MREQ</b-tag>
+    <b-tag style="margin-left:0em" type="is-status">{{this.status}}</b-tag>
     <span style="margin-left:0em" class="tag">
       <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
       {{this.hash}}
@@ -45,7 +46,8 @@
       <el-button size="mini">
         <font-awesome-icon icon="check" style="margin-right:0.25em"/>
       </el-button>
-      <el-button size="mini">Details
+      
+      <el-button v-on:click="showDetails()" size="mini">Details
         <font-awesome-icon icon="search-plus" style="margin-right:0.25em"/>
       </el-button>
     </el-button-group>
@@ -64,6 +66,13 @@ export default {
     subnetwork: String,
     addresses: {
       type: Array
+    },
+    status: String
+  },
+  methods: {
+    showDetails(){
+      this.$emit('showRequestDetails', this.hash);
+      // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
     }
   }
 };

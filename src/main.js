@@ -5,9 +5,9 @@ import App from './App.vue';
 import router from './router';
 import store from './store/store';
 import ElementUI from 'element-ui';
+import './element-variables.scss'
 import Buefy from 'buefy';
 import moment from 'moment';
-import 'element-ui/lib/theme-chalk/index.css';
 import { Card, Badge, Alert, Switch, Button } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 import { library } from '@fortawesome/fontawesome-svg-core';

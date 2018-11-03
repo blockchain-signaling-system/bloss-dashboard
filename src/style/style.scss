@@ -54,6 +54,10 @@ $primary: #989898;
 $primary-invert: findColorInvert($primary);
 $twitter: #fcff40;
 $twitter-invert: findColorInvert($twitter);
+$status: #fcff40;
+$status-invert: findColorInvert($twitter);
+
+
 
 $colors: (
     "white": ($white, $black),
@@ -65,7 +69,8 @@ $colors: (
     "success": ($success, $success-invert),
     "warning": ($warning, $warning-invert),
     "danger": ($danger, $danger-invert),
-    "twitter": ($twitter, $twitter-invert)
+    "twitter": ($twitter, $twitter-invert),
+    "status":($status, $status-invert)
 );
 
 
@@ -81,3 +86,4 @@ $link-focus-border: $primary;
 @import "~bulma/sass/utilities/_all";
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
+
