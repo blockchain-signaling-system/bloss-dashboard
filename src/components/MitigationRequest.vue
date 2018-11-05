@@ -71,15 +71,15 @@ export default {
   },
   methods: {
     showDetails(){
-      this.$emit('showRequestDetailsEvent', this.hash);
+      this.$emit('showRequestDetailsEvent', this.$vnode.key);
       // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
     },
     declineMREQ(){
-      this.$emit('declineMREQEvent', this.hash);
+      this.$emit('declineMREQEvent', this.$vnode.key);
       // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
     },
     acceptMREQ(){
-      this.$emit('acceptMREQEvent', this.hash);
+      this.$emit('acceptMREQEvent', this.$vnode.key);
       // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
     }
   }
