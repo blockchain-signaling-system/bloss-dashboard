@@ -152,14 +152,14 @@
                           <el-button-group>
                             <el-button style="padding=0.25em" size="mini">
                               <font-awesome-icon
-                                @click="startService('bloss')"
+                                :@click="startService('bloss')"
                                 icon="play"
                                 style="margin-right:0.25em"
                               />
                             </el-button>
                             <el-button size="mini">
                               <font-awesome-icon
-                                @click="killService('bloss')"
+                                :@click="killService('bloss')"
                                 icon="stop"
                                 style="margin-right:0.25em"
                               />
