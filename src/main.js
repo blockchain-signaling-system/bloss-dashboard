@@ -19,6 +19,27 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 library.add(fas);
 library.add(faEthereum);
 
+var VUE_APP_WEBSOCKET_PORT;
+if (!VUE_APP_WEBSOCKET_PORT) {
+  switch (process.env.VUE_APP_CONTROLLER) {
+      case 'CONTROLLER400':
+          console.info("Loading config for Controller400");
+          VUE_APP_WEBSOCKET_PORT = process.env.VUE_APP_C400_WS_PORT;
+          break;
+      case 'CONTROLLER500':
+          console.info("Loading config for Controller500");
+          VUE_APP_WEBSOCKET_PORT = process.env.VUE_APP_C500_WS_PORT;
+          break;
+      case 'CONTROLLER600':
+          console.info("Loading config for Controller600");
+          VUE_APP_WEBSOCKET_PORT = process.env.VUE_APP_C500_WS_PORT;
+          break;
+      default:
+          console.error('Initializing .env failed');
+          break;
+  }
+}
+
 Vue.prototype.moment = moment;
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
@@ -30,7 +51,7 @@ Vue.component(Switch.name, Switch);
 Vue.component(Button.name, Button);
 Vue.component(Steps.name, Steps);
 
-export const SocketInstance = socketio('http://localhost:3001');
+export const SocketInstance = socketio('http://localhost:'+VUE_APP_WEBSOCKET_PORT);
 
 Vue.config.productionTip = false;
 
