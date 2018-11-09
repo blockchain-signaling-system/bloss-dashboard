@@ -38,8 +38,8 @@
                 <p>DEFENCE ACTION: {{this.detailAttackReport.action}}</p>
                 <p>ATTACK ORIGIN SUBNETWORK: {{this.detailAttackReport.subnetwork}}</p>
                 <p>ATTACK ORIGIN NODES: {{this.detailAttackReport.addresses}}</p>
-                <el-button-group>
-                  <el-button v-on:click="declineMREQ()" size="mini">
+                <el-button-group v-show="!(this.detailAttackReport.status==='M_APPROVED')">>
+                   <el-button v-on:click="declineMREQ()" size="mini">
                     <font-awesome-icon icon="times" style="margin-right:0.25em"/>DECLINE
                   </el-button>
                   <el-button v-on:click="acceptMREQ()" size="mini">
@@ -58,15 +58,7 @@
             </span>
             <div class="columns">
               <div class="column">
-                <p style="margin-top:1em">
-                  <el-badge
-                    :hidden="this.mitigationRequests.length == 0 ? true:false"
-                    class="item"
-                    is-dot
-                  >
-                    <p class="col-title">REQUESTS</p>
-                  </el-badge>
-                </p>
+                <p style="margin-top:0.5em" class="col-title">REQUESTS</p>
                 <mitigation-request
                   @showRequestDetailsEvent="showDetails(mit._id)"
                   @declineMREQEvent="declineMREQ(mit._id)"
@@ -83,7 +75,7 @@
                 ></mitigation-request>
               </div>
               <div class="column">
-                <p class="col-title">PROCESSING</p>
+                <p style="margin-top:0.5em" class="col-title">PROCESSING</p>
                 <mitigation-request
                   @showRequestDetailsEvent="showDetails(mit._id)"
                   @declineMREQEvent="declineMREQ(mit._id)"
@@ -100,9 +92,10 @@
                 ></mitigation-request>
               </div>
               <div class="column">
-                <p class="col-title">LOG</p>
+                <p style="margin-top:0.5em" class="col-title">LOG</p>
               </div>
               <div class="column">
+                <p style="margin-top:0.5em"></p>
                 <p class="col-title">SYSTEM STATUS</p>
                 <article class="media">
                   <div class="media-content">
@@ -210,13 +203,9 @@
                             />
                           </el-button>
                           <el-button @click.native="killService('ipfs')" size="mini">
-                            <font-awesome-icon
-                              icon="stop"
-                              style="margin-right:0.25em"
-                            />
+                            <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
                           </el-button>
                         </el-button-group>
-                        
                       </div>
                     </div>
                   </div>
@@ -261,7 +250,8 @@ export default {
       isImageModalActive: false,
       isCardModalActive: false,
       detailAttackReportIndex: -1,
-      detailAttackReport: {}
+      detailAttackReport: {},
+      totalSteps: 10
     };
   },
   computed: {
@@ -332,6 +322,9 @@ export default {
     }
   },
   methods: {
+    getStepsDone(hash){
+      return Math.floor(Math.random() * 10) + 1;  
+    },
     updateStatus(service, status) {
       switch (service) {
         case "geth":
@@ -358,11 +351,17 @@ export default {
     },
     startService(servicename) {
       // console.log('Starting '+servicename);
-      this.$socket.emit("serviceControlRequest", { cmd: "start", service: servicename });
+      this.$socket.emit("serviceControlRequest", {
+        cmd: "start",
+        service: servicename
+      });
     },
     killService(servicename) {
       // console.log('Killing '+servicename);
-      this.$socket.emit("serviceControlRequest", { cmd: "stop", service: servicename });
+      this.$socket.emit("serviceControlRequest", {
+        cmd: "stop",
+        service: servicename
+      });
     },
     showDetails(attackReportId) {
       console.log("ShowDetails for _id " + attackReportId + " called");
@@ -445,7 +444,7 @@ export default {
         // We receive the new MREQ when it's updated on server side
       }
     },
-    requestMitigation(){
+    requestMitigation() {
       console.log("Requesting mitigation");
     }
   },
