@@ -150,19 +150,15 @@
                             />
                           </b-tag>
                           <el-button-group>
-                            <el-button style="padding=0.25em" size="mini">
-                              <font-awesome-icon
-                                :@click="startService('bloss')"
-                                icon="play"
-                                style="margin-right:0.25em"
-                              />
+                            <el-button
+                              v-on:click="startService('bloss')"
+                              style="padding=0.25em"
+                              size="mini"
+                            >
+                              <font-awesome-icon icon="play" style="margin-right:0.25em"/>
                             </el-button>
-                            <el-button size="mini">
-                              <font-awesome-icon
-                                :@click="killService('bloss')"
-                                icon="stop"
-                                style="margin-right:0.25em"
-                              />
+                            <el-button v-on:click="killService('bloss')" size="mini">
+                              <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
                             </el-button>
                           </el-button-group>
                         </div>
@@ -213,14 +209,14 @@
                               style="margin-right:0.25em"
                             />
                           </el-button>
-                          <el-button size="mini">
+                          <el-button @click.native="killService('ipfs')" size="mini">
                             <font-awesome-icon
-                              @click="killService('ipfs')"
                               icon="stop"
                               style="margin-right:0.25em"
                             />
                           </el-button>
                         </el-button-group>
+                        
                       </div>
                     </div>
                   </div>
@@ -229,7 +225,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="OUTGOING">
-            TODO
+            <el-button @click="requestMitigation()" size="mini">Request Mitigation Test</el-button>
             <span slot="label">
               <font-awesome-icon icon="share-square" style="margin-right:0.25em"/>OUTGOING
             </span>
@@ -361,10 +357,12 @@ export default {
       return new Date();
     },
     startService(servicename) {
-      this.$socket.emit("serviceCtl", { cmd: "start", service: servicename });
+      // console.log('Starting '+servicename);
+      this.$socket.emit("serviceControlRequest", { cmd: "start", service: servicename });
     },
     killService(servicename) {
-      this.$socket.emit("serviceCtl", { cmd: "stop", service: servicename });
+      // console.log('Killing '+servicename);
+      this.$socket.emit("serviceControlRequest", { cmd: "stop", service: servicename });
     },
     showDetails(attackReportId) {
       console.log("ShowDetails for _id " + attackReportId + " called");
@@ -389,7 +387,7 @@ export default {
           _id: this.detailAttackReport._id
         });
         this.isCardModalActive = false;
-          // Remove the MREQ from the local array
+        // Remove the MREQ from the local array
         var currentMREQIndex = this.mitigationRequests.findIndex(
           item => item._id === attackReportId
         );
@@ -404,7 +402,7 @@ export default {
           action: "M_APPROVED",
           _id: attackReportId
         });
-          // Remove the MREQ from the local array
+        // Remove the MREQ from the local array
         var currentMREQIndex = this.mitigationRequests.findIndex(
           item => item._id === attackReportId
         );
@@ -437,7 +435,7 @@ export default {
           action: "M_DECLINED",
           _id: attackReportId
         });
-          // Remove the MREQ from the local array
+        // Remove the MREQ from the local array
         var currentMREQIndex = this.mitigationRequests.findIndex(
           item => item._id === attackReportId
         );
@@ -446,6 +444,9 @@ export default {
         }
         // We receive the new MREQ when it's updated on server side
       }
+    },
+    requestMitigation(){
+      console.log("Requesting mitigation");
     }
   },
   name: "home",

@@ -32,7 +32,7 @@ if (!VUE_APP_WEBSOCKET_PORT) {
           break;
       case 'CONTROLLER600':
           console.info("Loading config for Controller600");
-          VUE_APP_WEBSOCKET_PORT = process.env.VUE_APP_C500_WS_PORT;
+          VUE_APP_WEBSOCKET_PORT = process.env.VUE_APP_C600_WS_PORT;
           break;
       default:
           console.error('Initializing .env failed');
