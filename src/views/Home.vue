@@ -63,7 +63,7 @@
                   @showRequestDetailsEvent="showDetails(mit._id)"
                   @declineMREQEvent="declineMREQ(mit._id)"
                   @acceptMREQEvent="acceptMREQ(mit._id)"
-                  v-for="mit in mREQ_T_REQUESTS"
+                  v-for="mit in newMitigationRequests"
                   v-bind:key="mit.key"
                   v-bind:hash="mit.hash"
                   v-bind:target="mit.target"
@@ -80,7 +80,7 @@
                   @showRequestDetailsEvent="showDetails(mit._id)"
                   @declineMREQEvent="declineMREQ(mit._id)"
                   @acceptMREQEvent="acceptMREQ(mit._id)"
-                  v-for="mit in mREQ_M_APPROVED"
+                  v-for="mit in acceptedMitigationRequests"
                   v-bind:key="mit._id"
                   v-bind:hash="mit.hash"
                   v-bind:target="mit.target"
@@ -223,15 +223,17 @@
                 <div class="column">
                   <p style="margin-top:0.5em" class="col-title">ALARMS</p>
                   <attack-alarm
-                    v-for="Notif in attackNotifications"
-                    v-bind:key="Notif.key"
-                    v-bind:hash="Notif.hash"
-                    v-bind:target="Notif.target"
-                    v-bind:timestamp="Notif.timestamp"
-                    v-bind:action="Notif.action"
-                    v-bind:subnetwork="Notif.subnetwork"
-                    v-bind:addresses="Notif.addresses"
-                    v-bind:status="Notif.status"
+                    @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
+                    @requestMitigationEvent="requestMitigation(reqMit._id)"
+                    v-for="reqMit in requestMitigations"
+                    v-bind:key="reqMit.key"
+                    v-bind:hash="reqMit.hash"
+                    v-bind:target="reqMit.target"
+                    v-bind:timestamp="reqMit.timestamp"
+                    v-bind:action="reqMit.action"
+                    v-bind:subnetwork="reqMit.subnetwork"
+                    v-bind:addresses="reqMit.addresses"
+                    v-bind:status="reqMit.status"
                   ></attack-alarm>
                 </div>
               </div>
@@ -265,8 +267,7 @@
 // @ is an alias to /src
 import MitigationRequest from "@/components/MitigationRequest.vue";
 import AttackAlarm from "@/components/AttackAlarm.vue";
-import mitReq from '@/constants/mitigationReq';
-import reqMit from '@/constants/reqMitigation';
+import constants from '@/constants';
 
 export default {
   data() {
@@ -280,7 +281,7 @@ export default {
       serviceStatusIPFS: false,
       serviceStatusInfluxDB: false,
       mitigationRequests: [],
-      attackNotifications: [],
+      requestMitigations: [],
       isImageModalActive: false,
       isCardModalActive: false,
       detailAttackReportIndex: -1,
@@ -296,14 +297,14 @@ export default {
         danger: !this.isConnected
       };
     },
-    mREQ_T_REQUESTS: function() {
-      return this.mitigationRequests.filter(function(mReq) {
-        return mReq.status === "T_REQUESTS";
+    newMitigationRequests: function() {
+      return this.mitigationRequests.filter(function(mitigationRequest) {
+        return mitigationRequest.status == constants.NEW_MITIGATION_REQ;
       });
     },
-    mREQ_M_APPROVED: function() {
-      return this.mitigationRequests.filter(function(mReq) {
-        return mReq.status === "M_APPROVED";
+    acceptedMitigationRequests: function() {
+      return this.mitigationRequests.filter(function(mitigationRequest) {
+        return mitigationRequest.status == constants.MITIGATION_REQ_ACCEPTED;
       });
     }
   },
@@ -320,7 +321,6 @@ export default {
       console.log("got isControllerAvailable from backend", data);
       console.log("autoAcceptRequests"+this.autoAcceptRequests);
       console.log("autoAcceptAlarms"+this.autoAcceptAlarms);
-      console.log("MitigationRequest.NEW_MITIGATION_REQUEST:::"+mitReq.NEW_MITIGATION_REQUEST);
       this.isControllerAvailable = data.controllerAvailability;
     },
     statusChannel(data) {
@@ -374,7 +374,7 @@ export default {
         status: data.data.status
       };
 
-      this.attackNotifications.push(alarm_report);
+      this.requestMitigations.push(alarm_report);
       // console.log(attack_report);
     }
   },
@@ -436,23 +436,23 @@ export default {
         // Coming from detail overview
         console.log("Accepting MREQ:" + this.detailAttackReport._id);
         this.$socket.emit("responseMREQ", {
-          action: "M_APPROVED",
+          action: constants.MITIGATION_REQ_ACCEPTED,
           _id: this.detailAttackReport._id
         });
         this.isCardModalActive = false;
         // Remove the MREQ from the local array
-        var currentMREQIndex = this.mitigationRequests.findIndex(
+        var currentMREQIndexDetail = this.mitigationRequests.findIndex(
           item => item._id === attackReportId
         );
-        if (currentMREQIndex > -1) {
-          this.mitigationRequests.splice(currentMREQIndex, 1);
+        if (currentMREQIndexDetail > -1) {
+          this.mitigationRequests.splice(currentMREQIndexDetail, 1);
         }
         // We receive the new MREQ when it's updated on server side
       } else {
         // Coming from Home screen
         console.log("Accepting MREQ:" + attackReportId);
         this.$socket.emit("responseMREQ", {
-          action: "M_APPROVED",
+          action: constants.MITIGATION_REQ_ACCEPTED,
           _id: attackReportId
         });
         // Remove the MREQ from the local array
@@ -470,22 +470,22 @@ export default {
         // Coming from detail overview
         console.log("Declining MREQ:" + this.detailAttackReport._id);
         this.$socket.emit("responseMREQ", {
-          action: "M_DECLINED",
+          action: constants.MITIGATION_REQ_DECLINED,
           _id: this.detailAttackReport._id
         });
         this.isCardModalActive = false;
         // Remove the MREQ from the local array
-        var currentMREQIndex = this.mitigationRequests.findIndex(
+        var currentMREQIndexDetail = this.mitigationRequests.findIndex(
           item => item._id === attackReportId
         );
-        if (currentMREQIndex > -1) {
-          this.mitigationRequests.splice(currentMREQIndex, 1);
+        if (currentMREQIndexDetail > -1) {
+          this.mitigationRequests.splice(currentMREQIndexDetail, 1);
         }
       } else {
         // Coming from Home screen
         console.log("Declining MREQ:" + attackReportId);
         this.$socket.emit("responseMREQ", {
-          action: "M_DECLINED",
+          action: constants.MITIGATION_REQ_DECLINED,
           _id: attackReportId
         });
         // Remove the MREQ from the local array
@@ -498,8 +498,35 @@ export default {
         // We receive the new MREQ when it's updated on server side
       }
     },
-    requestMitigation() {
-      console.log("Requesting mitigation");
+    ignoreAlarm(alarmId){
+      // Coming from Home screen
+        console.log("Ignoring Alarm:" + alarmId);
+        this.$socket.emit("alarmResponse", {
+          action: constants.ALARM_IGNORED,
+          _id: alarmId
+        });
+        // Remove the MREQ from the local array
+        var currentAlarmIndex = this.requestMitigations.findIndex(
+          item => item._id === alarmId
+        );
+        if (currentAlarmIndex > -1) {
+          this.requestMitigations.splice(currentAlarmIndex, 1);
+        }
+    },
+    requestMitigation(alarmId){
+      // Coming from Home screen
+        console.log("Requesting Mitigation Alarm:" + alarmId);
+        this.$socket.emit("alarmResponse", {
+          action: constants.REQ_MITIGATION_REQUESTED,
+          _id: alarmId
+        });
+        // Remove the MREQ from the local array
+        var currentAlarmIndex = this.requestMitigations.findIndex(
+          item => item._id === alarmId
+        );
+        if (currentAlarmIndex > -1) {
+          this.requestMitigations.splice(currentAlarmIndex, 1);
+        }
     },
     attackNotificationArrived() {
       this.$toast.open({

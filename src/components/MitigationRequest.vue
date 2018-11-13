@@ -13,7 +13,7 @@
     <span>
       <el-button
         style="margin-left:0em;margin-top:0.5em"
-        v-show="(this.status==='M_APPROVED')"
+        v-show="(this.status==='MITIGATION_REQ_ACCEPTED')"
         v-on:click="showDetails()"
         size="mini"
       >
@@ -21,16 +21,16 @@
       </el-button>
     </span>
     <hr>
-    <!-- this.status === M_APPROVED -->
-    <div v-show="(this.status==='M_APPROVED')">
+    <!-- this.status === MITIGATION_REQ_ACCEPTED -->
+    <div v-show="(this.status==='MITIGATION_REQ_ACCEPTED')">
       {{progressCounter}} %
       <el-progress
         :status="(progressCounter === 100) ? 'success' : '#8e71c7'"
         :percentage="progressCounter"
       ></el-progress>
     </div>
-    <!-- this.status === T_REQUESTS -->
-    <div v-show="!(this.status==='M_APPROVED')">
+    <!-- this.status === NEW_MITIGATION_REQ -->
+    <div v-show="(this.status==='NEW_MITIGATION_REQ')">
       <p class="heading">TARGET</p>
       <p style="margin-bottom:0;padding-bottom:0;" class="subtitle">
         {{this.target}}
@@ -58,7 +58,7 @@
         </span>
       </p>
       <br>
-      <el-button-group v-show="!(this.status==='M_APPROVED')">
+      <el-button-group v-show="!(this.status==='MITIGATION_REQ_ACCEPTED')">
         <el-button v-on:click="declineMREQ()" size="mini">
           <font-awesome-icon icon="times" style="margin-right:0.25em"/>
         </el-button>
@@ -74,6 +74,8 @@
 </template>
 
 <script>
+import constants from '@/constants';
+
 export default {
   data: function() {
     return {
