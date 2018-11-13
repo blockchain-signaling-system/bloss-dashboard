@@ -39,7 +39,7 @@
                 <p>ATTACK ORIGIN SUBNETWORK: {{this.detailAttackReport.subnetwork}}</p>
                 <p>ATTACK ORIGIN NODES: {{this.detailAttackReport.addresses}}</p>
                 <el-button-group v-show="!(this.detailAttackReport.status==='M_APPROVED')">>
-                   <el-button v-on:click="declineMREQ()" size="mini">
+                  <el-button v-on:click="declineMREQ()" size="mini">
                     <font-awesome-icon icon="times" style="margin-right:0.25em"/>DECLINE
                   </el-button>
                   <el-button v-on:click="acceptMREQ()" size="mini">
@@ -52,9 +52,9 @@
         </b-modal>
         <h1 class="title">BLOSS</h1>
         <el-tabs tab-position="top" style="height: 200px;">
-          <el-tab-pane label="INCOMING">
+          <el-tab-pane label="REQUESTS">
             <span slot="label">
-              <font-awesome-icon icon="inbox" style="margin-right:0.25em"/>INCOMING
+              <font-awesome-icon icon="inbox" style="margin-right:0.25em"/>REQUESTS
             </span>
             <div class="columns">
               <div class="column">
@@ -213,17 +213,47 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="OUTGOING">
-            <el-button @click="requestMitigation()" size="mini">Request Mitigation Test</el-button>
+          <el-tab-pane label="ALARMS">
             <span slot="label">
-              <font-awesome-icon icon="share-square" style="margin-right:0.25em"/>OUTGOING
+              <font-awesome-icon icon="share-square" style="margin-right:0.25em"/>ALARMS
             </span>
+            <div class="columns">
+              <div class="column">
+                <br>
+                <div class="column">
+                  <p style="margin-top:0.5em" class="col-title">ALARMS</p>
+                  <attack-alarm
+                    v-for="Notif in attackNotifications"
+                    v-bind:key="Notif.key"
+                    v-bind:hash="Notif.hash"
+                    v-bind:target="Notif.target"
+                    v-bind:timestamp="Notif.timestamp"
+                    v-bind:action="Notif.action"
+                    v-bind:subnetwork="Notif.subnetwork"
+                    v-bind:addresses="Notif.addresses"
+                    v-bind:status="Notif.status"
+                  ></attack-alarm>
+                </div>
+              </div>
+              <div class="column"></div>
+              <div class="column"></div>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="CONFIG">
-            TODO
             <span slot="label">
               <font-awesome-icon icon="cogs" style="margin-right:0.25em"/>CONFIG
             </span>
+            <div class="column">
+              <p style="margin-top:0.5em" class="col-title">SETTINGS</p>
+              <section>
+                <div class="field">
+                  <b-switch v-model="autoAcceptRequests" type="is-success">AUTO-ACCEPT Requests</b-switch>
+                </div>
+                <div class="field">
+                  <b-switch v-model="autoAcceptAlarms" type="is-success">AUTO-ACCEPT Alarms</b-switch>
+                </div>
+              </section>
+            </div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -234,6 +264,9 @@
 <script>
 // @ is an alias to /src
 import MitigationRequest from "@/components/MitigationRequest.vue";
+import AttackAlarm from "@/components/AttackAlarm.vue";
+import mitReq from '@/constants/mitigationReq';
+import reqMit from '@/constants/reqMitigation';
 
 export default {
   data() {
@@ -247,11 +280,13 @@ export default {
       serviceStatusIPFS: false,
       serviceStatusInfluxDB: false,
       mitigationRequests: [],
+      attackNotifications: [],
       isImageModalActive: false,
       isCardModalActive: false,
       detailAttackReportIndex: -1,
       detailAttackReport: {},
-      totalSteps: 10
+      autoAcceptRequests: false,
+      autoAcceptAlarms: false
     };
   },
   computed: {
@@ -283,6 +318,9 @@ export default {
     // Fired when the server sends something on the "messageChannel" channel.
     isControllerAvailable(data) {
       console.log("got isControllerAvailable from backend", data);
+      console.log("autoAcceptRequests"+this.autoAcceptRequests);
+      console.log("autoAcceptAlarms"+this.autoAcceptAlarms);
+      console.log("MitigationRequest.NEW_MITIGATION_REQUEST:::"+mitReq.NEW_MITIGATION_REQUEST);
       this.isControllerAvailable = data.controllerAvailability;
     },
     statusChannel(data) {
@@ -319,12 +357,28 @@ export default {
 
       this.mitigationRequests.push(attack_report);
       // console.log(attack_report);
+    },
+    alarmChannel(data) {
+      // console.log(data);
+      // Add new reports to the array "MitigationRequests"
+      console.log(JSON.stringify(data, null, 2));
+      this.attackNotificationArrived();
+      var alarm_report = {
+        _id: data.data._id,
+        hash: data.data.hash,
+        target: data.data.target,
+        timestamp: data.data.timestamp,
+        action: data.data.action,
+        subnetwork: data.data.subnetwork,
+        addresses: data.data.addresses,
+        status: data.data.status
+      };
+
+      this.attackNotifications.push(alarm_report);
+      // console.log(attack_report);
     }
   },
   methods: {
-    getStepsDone(hash){
-      return Math.floor(Math.random() * 10) + 1;  
-    },
     updateStatus(service, status) {
       switch (service) {
         case "geth":
@@ -446,11 +500,20 @@ export default {
     },
     requestMitigation() {
       console.log("Requesting mitigation");
+    },
+    attackNotificationArrived() {
+      this.$toast.open({
+        duration: 5000,
+        message: `You're under attack`,
+        position: "is-top",
+        type: "is-alarm"
+      });
     }
   },
   name: "home",
   components: {
-    MitigationRequest
+    "mitigation-request": MitigationRequest,
+    "attack-alarm": AttackAlarm
   }
 };
 //#

@@ -8,7 +8,7 @@ import ElementUI from 'element-ui';
 import './element-variables.scss'
 import Buefy from 'buefy';
 import moment from 'moment';
-import { Card, Badge, Alert, Switch, Button, Steps } from 'ant-design-vue';
+import { Card, Badge, Alert, Switch, Button, Steps, Popover, Timeline } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -44,7 +44,9 @@ Vue.prototype.moment = moment;
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+Vue.component(Timeline.name, Timeline);
 Vue.component(Badge.name, Badge);
+Vue.component(Popover.name, Popover);
 Vue.component(Card.name, Card);
 Vue.component(Alert.name, Alert);
 Vue.component(Switch.name, Switch);

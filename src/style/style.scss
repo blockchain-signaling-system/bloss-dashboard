@@ -56,6 +56,10 @@ $twitter: #fcff40;
 $twitter-invert: findColorInvert($twitter);
 $status: #fcff40;
 $status-invert: findColorInvert($twitter);
+$alarm: #e13c3c;
+$alarm-invert: findColorInvert($alarm);
+$alarm-status: #e28b8b;
+$alarm-status-invert: findColorInvert($alarm-status);
 
 
 
@@ -70,7 +74,9 @@ $colors: (
     "warning": ($warning, $warning-invert),
     "danger": ($danger, $danger-invert),
     "twitter": ($twitter, $twitter-invert),
-    "status":($status, $status-invert)
+    "status":($status, $status-invert),
+    "alarm":($alarm, $alarm-invert),
+    "alarm-status":($alarm-status, $alarm-status-invert)
 );
 
 

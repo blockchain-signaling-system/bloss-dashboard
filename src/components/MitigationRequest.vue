@@ -24,7 +24,10 @@
     <!-- this.status === M_APPROVED -->
     <div v-show="(this.status==='M_APPROVED')">
       {{progressCounter}} %
-      <el-progress :status="(progressCounter === 100) ? 'success' : '#8e71c7'" :percentage="progressCounter"></el-progress>
+      <el-progress
+        :status="(progressCounter === 100) ? 'success' : '#8e71c7'"
+        :percentage="progressCounter"
+      ></el-progress>
     </div>
     <!-- this.status === T_REQUESTS -->
     <div v-show="!(this.status==='M_APPROVED')">
