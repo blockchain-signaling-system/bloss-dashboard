@@ -327,7 +327,8 @@ export default {
     },
     acceptedMitigationRequests: function() {
       return this.mitigationRequests.filter(function(mitigationRequest) {
-        return mitigationRequest.status == constants.MITIGATION_REQ_ACCEPTED;
+        return mitigationRequest.status == constants.MITIGATION_REQ_ACCEPTED ||
+        mitigationRequest.status == constants.MITIGATION_REQ_IN_PROGRESS;
       });
     },
     newAlarms: function() {
@@ -339,7 +340,8 @@ export default {
       return this.requestMitigations.filter(function(requestMitigation) {
         return (
           requestMitigation.status == constants.REQ_MITIGATION_REQUESTED ||
-          requestMitigation.status == constants.REQ_MITIGATION_IN_PROGRESS
+          requestMitigation.status == constants.REQ_MITIGATION_IN_PROGRESS ||
+          requestMitigation.status == constants.REQ_MITIGATION_ACCEPTED
         );
       });
     },
@@ -397,6 +399,7 @@ export default {
       // console.log(data);
       // Add new reports to the array "MitigationRequests"
       console.log(JSON.stringify(data, null, 2));
+      console.log(data);
 
       var attack_report = {
         _id: data.data._id,
