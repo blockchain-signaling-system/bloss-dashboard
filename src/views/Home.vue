@@ -451,13 +451,13 @@ export default {
         status: data.data.status
       };
 
-      if (indexOfCurrentReport > -1) {
-        console.log('Replacing report at '+indexOfCurrentReport+' with new report.'+data.data.timestamp);
-        this.requestMitigations.splice(indexOfCurrentReport, 1, alarm_report);
-        // this.requestMitigations[indexOfCurrentReport] = alarm_report;
-      } else {
+      // if (indexOfCurrentReport > -1) {
+      //   console.log('Replacing report at '+indexOfCurrentReport+' with new report.'+data.data.timestamp);
+      //   this.requestMitigations.splice(indexOfCurrentReport, 1, alarm_report);
+      //   // this.requestMitigations[indexOfCurrentReport] = alarm_report;
+      // } else {
         this.requestMitigations.push(alarm_report);
-      }
+      // }
     }
   },
   methods: {
