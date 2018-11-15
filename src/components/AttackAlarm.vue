@@ -1,8 +1,6 @@
 <template>
     <div>
         <div style="margin-left:0.1em;margin-right:0.1em;margin-bottom:1em" class="box">
-            <b-tag style="margin-left:0em" type="is-alarm">ALARM</b-tag>
-            <b-tag style="margin-left:0em" type="is-alarm-status">{{this.status}}</b-tag>
             <el-button
                 v-on:click="ignoreAlarm()"
                 style="float:right"
@@ -10,7 +8,8 @@
                 icon="el-icon-delete"
                 circle
             ></el-button>
-            <span style="margin-left:0em" class="tag">
+            <b-tag style="margin-left:0em;margin-top:0.5em" type="is-alarm">{{this.status}}</b-tag>
+            <span style="margin-left:0em;margin-top:0.5em" class="tag">
                 <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
                 {{this.hash}}
             </span>

@@ -51,6 +51,7 @@
           </div>
         </b-modal>
         <h1 class="title">BLOSS</h1>
+        <h1 class="subtitle is-6">{{this.subtitle}}</h1>
         <el-tabs tab-position="top" style="height: 200px;">
           <el-tab-pane label="REQUESTS">
             <span slot="label">
@@ -219,26 +220,53 @@
             </span>
             <div class="columns">
               <div class="column">
-                <br>
-                <div class="column">
-                  <p style="margin-top:0.5em" class="col-title">ALARMS</p>
-                  <attack-alarm
-                    @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
-                    @requestMitigationEvent="requestMitigation(reqMit._id)"
-                    v-for="reqMit in requestMitigations"
-                    v-bind:key="reqMit.key"
-                    v-bind:hash="reqMit.hash"
-                    v-bind:target="reqMit.target"
-                    v-bind:timestamp="reqMit.timestamp"
-                    v-bind:action="reqMit.action"
-                    v-bind:subnetwork="reqMit.subnetwork"
-                    v-bind:addresses="reqMit.addresses"
-                    v-bind:status="reqMit.status"
-                  ></attack-alarm>
-                </div>
+                <p style="margin-top:0.5em" class="col-title">ALARMS</p>
+                <attack-alarm
+                  @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
+                  @requestMitigationEvent="requestMitigation(reqMit._id)"
+                  v-for="reqMit in newAlarms"
+                  v-bind:key="reqMit.key"
+                  v-bind:hash="reqMit.hash"
+                  v-bind:target="reqMit.target"
+                  v-bind:timestamp="reqMit.timestamp"
+                  v-bind:action="reqMit.action"
+                  v-bind:subnetwork="reqMit.subnetwork"
+                  v-bind:addresses="reqMit.addresses"
+                  v-bind:status="reqMit.status"
+                ></attack-alarm>
               </div>
-              <div class="column"></div>
-              <div class="column"></div>
+              <div class="column">
+                <p style="margin-top:0.5em" class="col-title">PROCESSING</p>
+                <attack-alarm
+                  @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
+                  @requestMitigationEvent="requestMitigation(reqMit._id)"
+                  v-for="reqMit in requestedRequestMitigations"
+                  v-bind:key="reqMit.key"
+                  v-bind:hash="reqMit.hash"
+                  v-bind:target="reqMit.target"
+                  v-bind:timestamp="reqMit.timestamp"
+                  v-bind:action="reqMit.action"
+                  v-bind:subnetwork="reqMit.subnetwork"
+                  v-bind:addresses="reqMit.addresses"
+                  v-bind:status="reqMit.status"
+                ></attack-alarm>
+              </div>
+              <div class="column">
+                <p style="margin-top:0.5em" class="col-title">LOG</p>
+                <attack-alarm
+                  @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
+                  @requestMitigationEvent="requestMitigation(reqMit._id)"
+                  v-for="reqMit in declinedAndSuccessfulRequestMitigations"
+                  v-bind:key="reqMit.key"
+                  v-bind:hash="reqMit.hash"
+                  v-bind:target="reqMit.target"
+                  v-bind:timestamp="reqMit.timestamp"
+                  v-bind:action="reqMit.action"
+                  v-bind:subnetwork="reqMit.subnetwork"
+                  v-bind:addresses="reqMit.addresses"
+                  v-bind:status="reqMit.status"
+                ></attack-alarm>
+              </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="CONFIG">
@@ -267,11 +295,12 @@
 // @ is an alias to /src
 import MitigationRequest from "@/components/MitigationRequest.vue";
 import AttackAlarm from "@/components/AttackAlarm.vue";
-import constants from '@/constants';
+import constants from "@/constants";
 
 export default {
   data() {
     return {
+      subtitle: process.env.VUE_APP_C400_CONTROLLER,
       isConnected: false,
       isControllerAvailable: false,
       socketMessage: "",
@@ -291,12 +320,6 @@ export default {
     };
   },
   computed: {
-    buttonClasses: function() {
-      return {
-        success: this.isConnected,
-        danger: !this.isConnected
-      };
-    },
     newMitigationRequests: function() {
       return this.mitigationRequests.filter(function(mitigationRequest) {
         return mitigationRequest.status == constants.NEW_MITIGATION_REQ;
@@ -305,6 +328,37 @@ export default {
     acceptedMitigationRequests: function() {
       return this.mitigationRequests.filter(function(mitigationRequest) {
         return mitigationRequest.status == constants.MITIGATION_REQ_ACCEPTED;
+      });
+    },
+    newAlarms: function() {
+      return this.requestMitigations.filter(function(alarm) {
+        return alarm.status == constants.NEW_ALARM;
+      });
+    },
+    requestedRequestMitigations: function() {
+      return this.requestMitigations.filter(function(requestMitigation) {
+        return (
+          requestMitigation.status == constants.REQ_MITIGATION_REQUESTED ||
+          requestMitigation.status == constants.REQ_MITIGATION_IN_PROGRESS
+        );
+      });
+    },
+    acceptedRequestMitigations: function() {
+      return this.requestMitigations.filter(function(requestMitigation) {
+        return requestMitigation.status == constants.REQ_MITIGATION_ACCEPTED;
+      });
+    },
+    processingRequestMitigations: function() {
+      return this.requestMitigations.filter(function(requestMitigation) {
+        return requestMitigation.status == constants.REQ_MITIGATION_IN_PROGRESS;
+      });
+    },
+    declinedAndSuccessfulRequestMitigations: function() {
+      return this.requestMitigations.filter(function(requestMitigation) {
+        return (
+          requestMitigation.status == constants.REQ_MITIGATION_DECLINED ||
+          requestMitigation.status == constants.REQ_MITIGATION_SUCCESSFUL
+        );
       });
     }
   },
@@ -319,8 +373,8 @@ export default {
     // Fired when the server sends something on the "messageChannel" channel.
     isControllerAvailable(data) {
       console.log("got isControllerAvailable from backend", data);
-      console.log("autoAcceptRequests"+this.autoAcceptRequests);
-      console.log("autoAcceptAlarms"+this.autoAcceptAlarms);
+      console.log("autoAcceptRequests" + this.autoAcceptRequests);
+      console.log("autoAcceptAlarms" + this.autoAcceptAlarms);
       this.isControllerAvailable = data.controllerAvailability;
     },
     statusChannel(data) {
@@ -362,7 +416,30 @@ export default {
       // console.log(data);
       // Add new reports to the array "MitigationRequests"
       console.log(JSON.stringify(data, null, 2));
-      this.attackNotificationArrived();
+
+      if (data.data.status == constants.NEW_ALARM) {
+        this.displayToast(data.data.status, 3000, "is-alarm");
+      }
+
+      // IFF there is already a report with
+      // status: NEW_ALARM
+      // timestamp: not newer, but not a lot older
+      // subnetwork: EQUAL
+      // target: EQUAL
+      // addresses: EQUAL content but might be different order
+      // THEN
+      // we shall replace the current object in the array with the new report
+      // this will happen every second until we decide to request mitigation.
+
+      var indexOfCurrentReport = this.requestMitigations.findIndex(
+        item =>
+          item.status == data.data.status &&
+          item.target == data.data.target &&
+          item.subnetwork == data.data.subnetwork
+      );
+
+      console.log('indexOfCurrentReport'+indexOfCurrentReport);
+
       var alarm_report = {
         _id: data.data._id,
         hash: data.data.hash,
@@ -374,8 +451,13 @@ export default {
         status: data.data.status
       };
 
-      this.requestMitigations.push(alarm_report);
-      // console.log(attack_report);
+      if (indexOfCurrentReport > -1) {
+        console.log('Replacing report at '+indexOfCurrentReport+' with new report.'+data.data.timestamp);
+        this.requestMitigations.splice(indexOfCurrentReport, 1, alarm_report);
+        // this.requestMitigations[indexOfCurrentReport] = alarm_report;
+      } else {
+        this.requestMitigations.push(alarm_report);
+      }
     }
   },
   methods: {
@@ -498,40 +580,48 @@ export default {
         // We receive the new MREQ when it's updated on server side
       }
     },
-    ignoreAlarm(alarmId){
+    ignoreAlarm(alarmId) {
       // Coming from Home screen
-        console.log("Ignoring Alarm:" + alarmId);
-        this.$socket.emit("alarmResponse", {
-          action: constants.ALARM_IGNORED,
-          _id: alarmId
-        });
-        // Remove the MREQ from the local array
-        var currentAlarmIndex = this.requestMitigations.findIndex(
-          item => item._id === alarmId
-        );
-        if (currentAlarmIndex > -1) {
-          this.requestMitigations.splice(currentAlarmIndex, 1);
-        }
+      console.log("Ignoring Alarm:" + alarmId);
+      this.$socket.emit("alarmResponse", {
+        action: constants.ALARM_IGNORED,
+        _id: alarmId
+      });
+      // Remove the MREQ from the local array
+      var currentAlarmIndex = this.requestMitigations.findIndex(
+        item => item._id === alarmId
+      );
+      if (currentAlarmIndex > -1) {
+        this.requestMitigations.splice(currentAlarmIndex, 1);
+      }
     },
-    requestMitigation(alarmId){
+    requestMitigation(alarmId) {
       // Coming from Home screen
-        console.log("Requesting Mitigation Alarm:" + alarmId);
-        this.$socket.emit("alarmResponse", {
-          action: constants.REQ_MITIGATION_REQUESTED,
-          _id: alarmId
-        });
-        // Remove the MREQ from the local array
-        var currentAlarmIndex = this.requestMitigations.findIndex(
-          item => item._id === alarmId
-        );
-        if (currentAlarmIndex > -1) {
-          this.requestMitigations.splice(currentAlarmIndex, 1);
-        }
+      console.log("Requesting Mitigation Alarm:" + alarmId);
+      this.$socket.emit("alarmResponse", {
+        action: constants.REQ_MITIGATION_REQUESTED,
+        _id: alarmId
+      });
+      // Remove the MREQ from the local array
+      var currentAlarmIndex = this.requestMitigations.findIndex(
+        item => item._id === alarmId
+      );
+      if (currentAlarmIndex > -1) {
+        this.requestMitigations.splice(currentAlarmIndex, 1);
+      }
+    },
+    displayToast(status, duration, style) {
+      this.$toast.open({
+        duration: duration,
+        message: status,
+        position: "is-top",
+        type: style
+      });
     },
     attackNotificationArrived() {
       this.$toast.open({
-        duration: 5000,
-        message: `You're under attack`,
+        duration: 2000,
+        message: `A node is under attack`,
         position: "is-top",
         type: "is-alarm"
       });
@@ -543,7 +633,6 @@ export default {
     "attack-alarm": AttackAlarm
   }
 };
-//#
 </script>
 
 <style>
