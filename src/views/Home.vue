@@ -300,7 +300,7 @@ import constants from "@/constants";
 export default {
   data() {
     return {
-      subtitle: process.env.VUE_APP_C400_CONTROLLER,
+      subtitle: process.env.VUE_APP_CONTROLLER,
       isConnected: false,
       isControllerAvailable: false,
       socketMessage: "",
