@@ -52,240 +52,274 @@
         </b-modal>
         <h1 class="title">BLOSS</h1>
         <h1 class="subtitle is-6">{{this.subtitle}}</h1>
-        <el-tabs tab-position="top" style="height: 200px;">
-          <el-tab-pane label="REQUESTS">
-            <span slot="label">
-              <font-awesome-icon icon="inbox" style="margin-right:0.25em"/>REQUESTS
-            </span>
-            <div class="columns">
-              <div class="column">
-                <p style="margin-top:0.5em" class="col-title">REQUESTS</p>
-                <mitigation-request
-                  @showRequestDetailsEvent="showDetails(mit._id)"
-                  @declineMREQEvent="declineMREQ(mit._id)"
-                  @acceptMREQEvent="acceptMREQ(mit._id)"
-                  v-for="mit in newMitigationRequests"
-                  v-bind:key="mit.key"
-                  v-bind:hash="mit.hash"
-                  v-bind:target="mit.target"
-                  v-bind:timestamp="mit.timestamp"
-                  v-bind:action="mit.action"
-                  v-bind:subnetwork="mit.subnetwork"
-                  v-bind:addresses="mit.addresses"
-                  v-bind:status="mit.status"
-                ></mitigation-request>
-              </div>
-              <div class="column">
-                <p style="margin-top:0.5em" class="col-title">PROCESSING</p>
-                <mitigation-request
-                  @showRequestDetailsEvent="showDetails(mit._id)"
-                  @declineMREQEvent="declineMREQ(mit._id)"
-                  @acceptMREQEvent="acceptMREQ(mit._id)"
-                  v-for="mit in acceptedMitigationRequests"
-                  v-bind:key="mit._id"
-                  v-bind:hash="mit.hash"
-                  v-bind:target="mit.target"
-                  v-bind:timestamp="mit.timestamp"
-                  v-bind:action="mit.action"
-                  v-bind:subnetwork="mit.subnetwork"
-                  v-bind:addresses="mit.addresses"
-                  v-bind:status="mit.status"
-                ></mitigation-request>
-              </div>
-              <div class="column">
-                <p style="margin-top:0.5em" class="col-title">LOG</p>
-              </div>
-              <div class="column">
-                <p style="margin-top:0.5em"></p>
-                <p class="col-title">SYSTEM STATUS</p>
-                <article class="media">
-                  <div class="media-content">
-                    <div class="content">
-                      <p>
-                        <a-badge :status="isConnected ? 'success' : 'warning'"/>
-                        <b-tooltip
-                          :label="isConnected ? 'WSConn to bloss-node instance successful.' : 'Establishing connection...'"
-                          position="is-top"
-                          animated
-                          :type="isConnected ? 'is-success' : 'is-warning'"
-                        >
-                          <b-tag
-                            style="height:2.3em;margin-left:0em;"
-                            class="tag"
-                            :type="isConnected ? 'is-success' : 'is-warning'"
-                          >WEBSOCKET</b-tag>
-                        </b-tooltip>
-                        <span>
-                          <font-awesome-icon v-show="!isConnected" icon="spinner" pulse/>
-                        </span>
-                      </p>
-                      <p>
-                        <a-badge :status="isControllerAvailable ? 'success' : 'warning'"/>
-                        <b-tag
-                          style="height:2.3em;margin-left:0em;"
-                          class="tag"
-                          :type="isControllerAvailable ? 'is-success' : 'is-warning'"
-                        >CONTROLLER</b-tag>
-                        <span>
-                          <font-awesome-icon v-show="!isControllerAvailable" icon="spinner" pulse/>
-                        </span>
-                      </p>
-                      <div v-show="isControllerAvailable">
-                        <div class="tile">
-                          <a-badge :status="serviceStatusBloss ? 'success' : 'error'"/>
-                          <b-tag
-                            style="height:2.3em;margin-left:0em;"
-                            class="tag"
-                            :type="serviceStatusBloss ? 'is-success' : 'is-warning'"
-                          >BLOSS
-                            <font-awesome-icon
-                              :icon="serviceStatusBloss ? 'check' : 'pause-circle'"
-                              style="margin-right:0.25em"
-                            />
-                          </b-tag>
-                          <el-button-group>
-                            <el-button
-                              v-on:click="startService('bloss')"
-                              style="padding=0.25em"
-                              size="mini"
-                            >
-                              <font-awesome-icon icon="play" style="margin-right:0.25em"/>
-                            </el-button>
-                            <el-button v-on:click="killService('bloss')" size="mini">
-                              <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
-                            </el-button>
-                          </el-button-group>
-                        </div>
-                        <a-badge :status="serviceStatusGeth ? 'success' : 'error'"/>
-                        <b-tag
-                          style="height:2.3em;margin-left:0em;"
-                          class="tag"
-                          :type="serviceStatusGeth ? 'is-success' : 'is-warning'"
-                        >GETH
-                          <font-awesome-icon
-                            :icon="serviceStatusGeth ? 'check' : 'pause-circle'"
-                            style="margin-right:0.25em"
-                          />
-                        </b-tag>
-                        <el-button-group>
-                          <el-button style="padding=0.25em" size="mini">
-                            <font-awesome-icon
-                              @click="startService('geth')"
-                              icon="play"
-                              style="margin-right:0.25em"
-                            />
-                          </el-button>
-                          <el-button size="mini">
-                            <font-awesome-icon
-                              @click="killService('geth')"
-                              icon="stop"
-                              style="margin-right:0.25em"
-                            />
-                          </el-button>
-                        </el-button-group>
-                        <br>
-                        <a-badge :status="serviceStatusIPFS ? 'success' : 'error'"/>
-                        <b-tag
-                          style="height:2.3em;margin-left:0em;"
-                          class="tag"
-                          :type="serviceStatusIPFS ? 'is-success' : 'is-warning'"
-                        >IPFS
-                          <font-awesome-icon
-                            :icon="serviceStatusIPFS ? 'check' : 'pause-circle'"
-                            style="margin-right:0.25em"
-                          />
-                        </b-tag>
-                        <el-button-group>
-                          <el-button style="padding=0.25em" size="mini">
-                            <font-awesome-icon
-                              @click="startService('ipfs')"
-                              icon="play"
-                              style="margin-right:0.25em"
-                            />
-                          </el-button>
-                          <el-button @click.native="killService('ipfs')" size="mini">
-                            <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
-                          </el-button>
-                        </el-button-group>
-                      </div>
+        <div class="columns">
+          <div class="column is-three-quarters">
+            <el-tabs tab-position="top" style="height: 200px;">
+              <el-tab-pane label="REQUESTS">
+                <span slot="label">
+                  <font-awesome-icon icon="inbox" style="margin-right:0.25em"/>REQUESTS
+                </span>
+                <div class="columns">
+                  <div class="column">
+                    <p style="margin-top:0.5em" class="col-title">REQUESTS</p>
+                    <mitigation-request
+                      @showRequestDetailsEvent="showDetails(mit._id)"
+                      @declineMREQEvent="declineMREQ(mit._id)"
+                      @acceptMREQEvent="acceptMREQ(mit._id)"
+                      v-for="mit in newMitigationRequests"
+                      v-bind:key="mit.key"
+                      v-bind:hash="mit.hash"
+                      v-bind:target="mit.target"
+                      v-bind:timestamp="mit.timestamp"
+                      v-bind:action="mit.action"
+                      v-bind:subnetwork="mit.subnetwork"
+                      v-bind:addresses="mit.addresses"
+                      v-bind:status="mit.status"
+                    ></mitigation-request>
+                    <div v-if="newMitigationRequests.length === 0">
+                      <el-alert title=" No new MREQ" type="info" :closable="false"></el-alert>
                     </div>
                   </div>
-                </article>
-              </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="ALARMS">
-            <span slot="label">
-              <font-awesome-icon icon="share-square" style="margin-right:0.25em"/>ALARMS
-            </span>
-            <div class="columns">
-              <div class="column">
-                <p style="margin-top:0.5em" class="col-title">ALARMS</p>
-                <attack-alarm
-                  @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
-                  @requestMitigationEvent="requestMitigation(reqMit._id)"
-                  v-for="reqMit in newAlarms"
-                  v-bind:key="reqMit.key"
-                  v-bind:hash="reqMit.hash"
-                  v-bind:target="reqMit.target"
-                  v-bind:timestamp="reqMit.timestamp"
-                  v-bind:action="reqMit.action"
-                  v-bind:subnetwork="reqMit.subnetwork"
-                  v-bind:addresses="reqMit.addresses"
-                  v-bind:status="reqMit.status"
-                ></attack-alarm>
-              </div>
-              <div class="column">
-                <p style="margin-top:0.5em" class="col-title">PROCESSING</p>
-                <attack-alarm
-                  @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
-                  @requestMitigationEvent="requestMitigation(reqMit._id)"
-                  v-for="reqMit in requestedRequestMitigations"
-                  v-bind:key="reqMit.key"
-                  v-bind:hash="reqMit.hash"
-                  v-bind:target="reqMit.target"
-                  v-bind:timestamp="reqMit.timestamp"
-                  v-bind:action="reqMit.action"
-                  v-bind:subnetwork="reqMit.subnetwork"
-                  v-bind:addresses="reqMit.addresses"
-                  v-bind:status="reqMit.status"
-                ></attack-alarm>
-              </div>
-              <div class="column">
-                <p style="margin-top:0.5em" class="col-title">LOG</p>
-                <attack-alarm
-                  @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
-                  @requestMitigationEvent="requestMitigation(reqMit._id)"
-                  v-for="reqMit in declinedAndSuccessfulRequestMitigations"
-                  v-bind:key="reqMit.key"
-                  v-bind:hash="reqMit.hash"
-                  v-bind:target="reqMit.target"
-                  v-bind:timestamp="reqMit.timestamp"
-                  v-bind:action="reqMit.action"
-                  v-bind:subnetwork="reqMit.subnetwork"
-                  v-bind:addresses="reqMit.addresses"
-                  v-bind:status="reqMit.status"
-                ></attack-alarm>
-              </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="CONFIG">
-            <span slot="label">
-              <font-awesome-icon icon="cogs" style="margin-right:0.25em"/>CONFIG
-            </span>
-            <div class="column">
-              <p style="margin-top:0.5em" class="col-title">SETTINGS</p>
-              <section>
-                <div class="field">
-                  <b-switch v-model="autoAcceptRequests" type="is-success">AUTO-ACCEPT Requests</b-switch>
+                  <div class="column">
+                    <p style="margin-top:0.5em" class="col-title">IN PROGRESS</p>
+                    <mitigation-request
+                      @showRequestDetailsEvent="showDetails(mit._id)"
+                      @declineMREQEvent="declineMREQ(mit._id)"
+                      @acceptMREQEvent="acceptMREQ(mit._id)"
+                      v-for="mit in acceptedAndProgressMitigationRequests"
+                      v-bind:key="mit._id"
+                      v-bind:hash="mit.hash"
+                      v-bind:target="mit.target"
+                      v-bind:timestamp="mit.timestamp"
+                      v-bind:action="mit.action"
+                      v-bind:subnetwork="mit.subnetwork"
+                      v-bind:addresses="mit.addresses"
+                      v-bind:status="mit.status"
+                    ></mitigation-request>
+                    <div v-if="acceptedAndProgressMitigationRequests.length === 0">
+                      <el-alert title=" No MREQ in progress" type="info" :closable="false"></el-alert>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <p style="margin-top:0.5em" class="col-title">LOG</p>
+                    <mitigation-request
+                      @showRequestDetailsEvent="showDetails(mit._id)"
+                      @declineMREQEvent="declineMREQ(mit._id)"
+                      @acceptMREQEvent="acceptMREQ(mit._id)"
+                      v-for="mit in successfulAndDeclinedMitigationRequests"
+                      v-bind:key="mit._id"
+                      v-bind:hash="mit.hash"
+                      v-bind:target="mit.target"
+                      v-bind:timestamp="mit.timestamp"
+                      v-bind:action="mit.action"
+                      v-bind:subnetwork="mit.subnetwork"
+                      v-bind:addresses="mit.addresses"
+                      v-bind:status="mit.status"
+                    ></mitigation-request>
+                    <div v-if="successfulAndDeclinedMitigationRequests.length === 0">
+                      <el-alert title=" No finalized MREQ" type="info" :closable="false"></el-alert>
+                    </div>
+                  </div>
                 </div>
-                <div class="field">
-                  <b-switch v-model="autoAcceptAlarms" type="is-success">AUTO-ACCEPT Alarms</b-switch>
+              </el-tab-pane>
+              <el-tab-pane label="ALARMS">
+                <span slot="label">
+                  <font-awesome-icon icon="share-square" style="margin-right:0.25em"/>ALARMS
+                </span>
+                <div class="columns">
+                  <div class="column">
+                    <p style="margin-top:0.5em" class="col-title">ALARMS</p>
+                    <attack-alarm
+                      @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
+                      @requestMitigationEvent="requestMitigation(reqMit._id)"
+                      v-for="reqMit in newAlarms"
+                      v-bind:key="reqMit.key"
+                      v-bind:hash="reqMit.hash"
+                      v-bind:target="reqMit.target"
+                      v-bind:timestamp="reqMit.timestamp"
+                      v-bind:action="reqMit.action"
+                      v-bind:subnetwork="reqMit.subnetwork"
+                      v-bind:addresses="reqMit.addresses"
+                      v-bind:status="reqMit.status"
+                    ></attack-alarm>
+                    <div v-if="newAlarms.length === 0">
+                      <el-alert title=" No new alarms" type="info" :closable="false"></el-alert>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <p style="margin-top:0.5em" class="col-title">IN PROGRESS</p>
+                    <attack-alarm
+                      @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
+                      @requestMitigationEvent="requestMitigation(reqMit._id)"
+                      v-for="reqMit in requestedAcceptedAndProgressRequestMitigations"
+                      v-bind:key="reqMit.key"
+                      v-bind:hash="reqMit.hash"
+                      v-bind:target="reqMit.target"
+                      v-bind:timestamp="reqMit.timestamp"
+                      v-bind:action="reqMit.action"
+                      v-bind:subnetwork="reqMit.subnetwork"
+                      v-bind:addresses="reqMit.addresses"
+                      v-bind:status="reqMit.status"
+                    ></attack-alarm>
+                    <div v-if="requestedAcceptedAndProgressRequestMitigations.length === 0">
+                      <el-alert title=" No REQM in progress" type="info" :closable="false"></el-alert>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <p style="margin-top:0.5em" class="col-title">LOG</p>
+                    <attack-alarm
+                      @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
+                      @requestMitigationEvent="requestMitigation(reqMit._id)"
+                      v-for="reqMit in declinedAndSuccessfulRequestMitigations"
+                      v-bind:key="reqMit.key"
+                      v-bind:hash="reqMit.hash"
+                      v-bind:target="reqMit.target"
+                      v-bind:timestamp="reqMit.timestamp"
+                      v-bind:action="reqMit.action"
+                      v-bind:subnetwork="reqMit.subnetwork"
+                      v-bind:addresses="reqMit.addresses"
+                      v-bind:status="reqMit.status"
+                    ></attack-alarm>
+                     <div v-if="declinedAndSuccessfulRequestMitigations.length === 0">
+                      <el-alert title=" No finalized REQM" type="info" :closable="false"></el-alert>
+                    </div>
+                  </div>
                 </div>
-              </section>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
+              </el-tab-pane>
+              <el-tab-pane label="CONFIG">
+                <span slot="label">
+                  <font-awesome-icon icon="cogs" style="margin-right:0.25em"/>CONFIG
+                </span>
+                <div class="column">
+                  <p style="margin-top:0.5em" class="col-title">SETTINGS</p>
+                  <section>
+                    <div class="field">
+                      <b-switch v-model="autoAcceptRequests" type="is-success">AUTO-ACCEPT Requests</b-switch>
+                    </div>
+                    <div class="field">
+                      <b-switch v-model="autoAcceptAlarms" type="is-success">AUTO-ACCEPT Alarms</b-switch>
+                    </div>
+                  </section>
+                </div>
+              </el-tab-pane>
+            </el-tabs>
+          </div>
+          <div class="column">
+            <article class="media">
+              <div class="media-content">
+                <div class="content">
+                  <p>
+                    <a-badge :status="isConnected ? 'success' : 'warning'"/>
+                    <b-tooltip
+                      :label="isConnected ? 'WSConn to bloss-node instance successful.' : 'Establishing connection...'"
+                      position="is-top"
+                      animated
+                      :type="isConnected ? 'is-success' : 'is-warning'"
+                    >
+                      <b-tag
+                        style="height:2.3em;margin-left:0em;"
+                        class="tag"
+                        :type="isConnected ? 'is-success' : 'is-warning'"
+                      >WEBSOCKET</b-tag>
+                    </b-tooltip>
+                    <span>
+                      <font-awesome-icon v-show="!isConnected" icon="spinner" pulse/>
+                    </span>
+                  </p>
+                  <p>
+                    <a-badge :status="isControllerAvailable ? 'success' : 'warning'"/>
+                    <b-tag
+                      style="height:2.3em;margin-left:0em;"
+                      class="tag"
+                      :type="isControllerAvailable ? 'is-success' : 'is-warning'"
+                    >CONTROLLER</b-tag>
+                    <span>
+                      <font-awesome-icon v-show="!isControllerAvailable" icon="spinner" pulse/>
+                    </span>
+                  </p>
+                  <div v-show="isControllerAvailable">
+                    <div class="tile">
+                      <a-badge :status="serviceStatusBloss ? 'success' : 'error'"/>
+                      <b-tag
+                        style="height:2.3em;margin-left:0em;"
+                        class="tag"
+                        :type="serviceStatusBloss ? 'is-success' : 'is-warning'"
+                      >BLOSS
+                        <font-awesome-icon
+                          :icon="serviceStatusBloss ? 'check' : 'pause-circle'"
+                          style="margin-right:0.25em"
+                        />
+                      </b-tag>
+                      <el-button-group>
+                        <el-button
+                          v-on:click="startService('bloss')"
+                          style="padding=0.25em"
+                          size="mini"
+                        >
+                          <font-awesome-icon icon="play" style="margin-right:0.25em"/>
+                        </el-button>
+                        <el-button v-on:click="killService('bloss')" size="mini">
+                          <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
+                        </el-button>
+                      </el-button-group>
+                    </div>
+                    <a-badge :status="serviceStatusGeth ? 'success' : 'error'"/>
+                    <b-tag
+                      style="height:2.3em;margin-left:0em;"
+                      class="tag"
+                      :type="serviceStatusGeth ? 'is-success' : 'is-warning'"
+                    >GETH
+                      <font-awesome-icon
+                        :icon="serviceStatusGeth ? 'check' : 'pause-circle'"
+                        style="margin-right:0.25em"
+                      />
+                    </b-tag>
+                    <el-button-group>
+                      <el-button style="padding=0.25em" size="mini">
+                        <font-awesome-icon
+                          @click="startService('geth')"
+                          icon="play"
+                          style="margin-right:0.25em"
+                        />
+                      </el-button>
+                      <el-button size="mini">
+                        <font-awesome-icon
+                          @click="killService('geth')"
+                          icon="stop"
+                          style="margin-right:0.25em"
+                        />
+                      </el-button>
+                    </el-button-group>
+                    <br>
+                    <a-badge :status="serviceStatusIPFS ? 'success' : 'error'"/>
+                    <b-tag
+                      style="height:2.3em;margin-left:0em;"
+                      class="tag"
+                      :type="serviceStatusIPFS ? 'is-success' : 'is-warning'"
+                    >IPFS
+                      <font-awesome-icon
+                        :icon="serviceStatusIPFS ? 'check' : 'pause-circle'"
+                        style="margin-right:0.25em"
+                      />
+                    </b-tag>
+                    <el-button-group>
+                      <el-button style="padding=0.25em" size="mini">
+                        <font-awesome-icon
+                          @click="startService('ipfs')"
+                          icon="play"
+                          style="margin-right:0.25em"
+                        />
+                      </el-button>
+                      <el-button @click.native="killService('ipfs')" size="mini">
+                        <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
+                      </el-button>
+                    </el-button-group>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -325,10 +359,20 @@ export default {
         return mitigationRequest.status == constants.NEW_MITIGATION_REQ;
       });
     },
-    acceptedMitigationRequests: function() {
+    acceptedAndProgressMitigationRequests: function() {
       return this.mitigationRequests.filter(function(mitigationRequest) {
-        return mitigationRequest.status == constants.MITIGATION_REQ_ACCEPTED ||
-        mitigationRequest.status == constants.MITIGATION_REQ_IN_PROGRESS;
+        return (
+          mitigationRequest.status == constants.MITIGATION_REQ_ACCEPTED ||
+          mitigationRequest.status == constants.MITIGATION_REQ_IN_PROGRESS
+        );
+      });
+    },
+    successfulAndDeclinedMitigationRequests: function() {
+      return this.mitigationRequests.filter(function(mitigationRequest) {
+        return (
+          mitigationRequest.status == constants.MITIGATION_REQ_SUCCESSFUL||
+          mitigationRequest.status == constants.MITIGATION_REQ_DECLINED
+        );
       });
     },
     newAlarms: function() {
@@ -336,23 +380,13 @@ export default {
         return alarm.status == constants.NEW_ALARM;
       });
     },
-    requestedRequestMitigations: function() {
+    requestedAcceptedAndProgressRequestMitigations: function() {
       return this.requestMitigations.filter(function(requestMitigation) {
         return (
           requestMitigation.status == constants.REQ_MITIGATION_REQUESTED ||
-          requestMitigation.status == constants.REQ_MITIGATION_IN_PROGRESS ||
-          requestMitigation.status == constants.REQ_MITIGATION_ACCEPTED
+          requestMitigation.status == constants.REQ_MITIGATION_ACCEPTED ||
+          requestMitigation.status == constants.REQ_MITIGATION_IN_PROGRESS
         );
-      });
-    },
-    acceptedRequestMitigations: function() {
-      return this.requestMitigations.filter(function(requestMitigation) {
-        return requestMitigation.status == constants.REQ_MITIGATION_ACCEPTED;
-      });
-    },
-    processingRequestMitigations: function() {
-      return this.requestMitigations.filter(function(requestMitigation) {
-        return requestMitigation.status == constants.REQ_MITIGATION_IN_PROGRESS;
       });
     },
     declinedAndSuccessfulRequestMitigations: function() {
@@ -441,7 +475,7 @@ export default {
           item.subnetwork == data.data.subnetwork
       );
 
-      console.log('indexOfCurrentReport'+indexOfCurrentReport);
+      console.log("indexOfCurrentReport" + indexOfCurrentReport);
 
       var alarm_report = {
         _id: data.data._id,
@@ -459,7 +493,7 @@ export default {
       //   this.requestMitigations.splice(indexOfCurrentReport, 1, alarm_report);
       //   // this.requestMitigations[indexOfCurrentReport] = alarm_report;
       // } else {
-        this.requestMitigations.push(alarm_report);
+      this.requestMitigations.push(alarm_report);
       // }
     }
   },
