@@ -480,12 +480,15 @@ export default {
         status: data.data.status
       };
 
-      if (data.data.status == constants.MITIGATION_REQ_IN_PROGRESS || data.data.status == constants.MITIGATION_REQ_SUCCESSFUL) {
+      if (
+        data.data.status == constants.MITIGATION_REQ_IN_PROGRESS ||
+        data.data.status == constants.MITIGATION_REQ_SUCCESSFUL
+      ) {
         console.log("MITIGATION_REQ_IN_PROGRESS arrived");
         var indexOfCurrentReport = this.mitigationRequests.findIndex(
           item => item._id == data.data._id
         );
-        console.log('indexOfCurrentReport'+indexOfCurrentReport);
+        console.log("indexOfCurrentReport" + indexOfCurrentReport);
         if (indexOfCurrentReport > -1) {
           this.mitigationRequests.splice(indexOfCurrentReport, 1);
           this.mitigationRequests.push(attack_report);
@@ -513,13 +516,6 @@ export default {
       // we shall replace the current object in the array with the new report
       // this will happen every second until we decide to request mitigation.
 
-      var indexOfCurrentReport = this.requestMitigations.findIndex(
-        item =>
-          item.status == data.data.status &&
-          item.target == data.data.target &&
-          item.subnetwork == data.data.subnetwork
-      );
-
       console.log("indexOfCurrentReport" + indexOfCurrentReport);
 
       var alarm_report = {
@@ -527,19 +523,34 @@ export default {
         hash: data.data.hash,
         target: data.data.target,
         timestamp: data.data.timestamp,
+        timestamp_requested: data.data.timestamp_requested,
+        timestamp_accepted: data.data.timestamp_accepted,
+        timestamp_declined: data.data.timestamp_declined,
+        timestamp_in_progress: data.data.timestamp_in_progress,
+        timestamp_successful: data.data.timestamp_successful,
         action: data.data.action,
         subnetwork: data.data.subnetwork,
         addresses: data.data.addresses,
         status: data.data.status
       };
 
-      // if (indexOfCurrentReport > -1) {
-      //   console.log('Replacing report at '+indexOfCurrentReport+' with new report.'+data.data.timestamp);
-      //   this.requestMitigations.splice(indexOfCurrentReport, 1, alarm_report);
-      //   // this.requestMitigations[indexOfCurrentReport] = alarm_report;
-      // } else {
-      this.requestMitigations.push(alarm_report);
-      // }
+      if (
+        data.data.status == constants.REQ_MITIGATION_ACCEPTED ||
+        data.data.status == constants.REQ_MITIGATION_DECLINED ||
+        data.data.status == constants.REQ_MITIGATION_IN_PROGRESS ||
+        data.data.status == constants.REQ_MITIGATION_SUCCESSFUL
+      ) {
+        var indexOfCurrentReport = this.requestMitigations.findIndex(
+          item => item.hash == data.data.hash
+        );
+        console.log("indexOfCurrentReport" + indexOfCurrentReport);
+        if (indexOfCurrentReport > -1) {
+          this.requestMitigations.splice(indexOfCurrentReport, 1);
+          this.requestMitigations.push(alarm_report);
+        }
+      } else {
+        this.requestMitigations.push(alarm_report);
+      }
     }
   },
   methods: {
