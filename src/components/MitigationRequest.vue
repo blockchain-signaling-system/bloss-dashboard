@@ -1,7 +1,19 @@
 <template>
   <div style="margin-left:0.1em;margin-right:0.1em;margin-bottom:1em" class="box">
-    <b-tag style="margin-left:0em" type="is-twitter">MREQ</b-tag>
-    <b-tag style="margin-left:0em" type="is-status">{{this.status}}</b-tag>
+    <b-tag style="margin-left:0em" type="is-yellow">{{this.status}}</b-tag>
+    <!-- BEGIN this.status === MITIGATION_REQ_ACCEPTED -->
+    <span
+      v-show="(this.status==='MITIGATION_REQ_ACCEPTED' || this.status==='MITIGATION_REQ_DECLINED' ||this.status==='MITIGATION_REQ_SUCCESSFUL')"
+    >
+      <el-button
+        v-on:click="showDetails()"
+        style="float:right"
+        size="mini"
+        icon="el-icon-zoom-in"
+        circle
+      ></el-button>
+    </span>
+    <!-- END this.status === MITIGATION_REQ_ACCEPTED -->
     <span style="margin-left:0em" class="tag">
       <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
       {{this.hash}}
@@ -10,26 +22,48 @@
       <font-awesome-icon icon="clock" style="margin-right:0.25em"/>
       {{moment(this.timestamp).format('hh:mm:ss a')}}
     </b-tag>
-    <span>
-      <el-button
-        style="margin-left:0em;margin-top:0.5em"
-        v-show="(this.status==='MITIGATION_REQ_ACCEPTED')"
-        v-on:click="showDetails()"
-        size="mini"
-      >
-        <font-awesome-icon icon="search-plus" style="margin-right:0.25em"/>Details
-      </el-button>
-    </span>
     <hr>
-    <!-- this.status === MITIGATION_REQ_ACCEPTED -->
+    <!-- BEGIN this.status === MITIGATION_REQ_ACCEPTED -->
     <div v-show="(this.status==='MITIGATION_REQ_ACCEPTED')">
-      {{progressCounter}} %
-      <el-progress
-        :status="(progressCounter === 100) ? 'success' : '#8e71c7'"
-        :percentage="progressCounter"
-      ></el-progress>
+      <p class="heading">MREQ INFO</p>
+      <span>
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at 20:23:33
+        <br>
+        <font-awesome-icon
+          style="margin-right:.75em"
+          v-show="(this.status==='MITIGATION_REQ_ACCEPTED')"
+          icon="spinner"
+          pulse
+        />Waiting for blocking
+      </span>
     </div>
-    <!-- this.status === NEW_MITIGATION_REQ -->
+    <!-- END this.status === MITIGATION_REQ_ACCEPTED -->
+    <!-- BEGIN this.status === MITIGATION_REQ_DECLINED -->
+    <div v-show="(this.status==='MITIGATION_REQ_DECLINED')">
+      <p class="heading">MREQ INFO</p>
+      <span>
+        <font-awesome-icon style="margin-right:.75em" icon="times"/>Declined at 20:23:33
+      </span>
+    </div>
+    <!-- END this.status === MITIGATION_REQ_DECLINED -->
+    <!-- BEGIN this.status === MITIGATION_REQ_IN_PROGRESS -->
+    <div v-show="(this.status==='MITIGATION_REQ_IN_PROGRESS')">
+      <p class="heading">MREQ INFO</p>
+      <span>
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at 20:23:33
+        <br>
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>Started blocking at 20:23:45
+        <br>
+        <font-awesome-icon
+          style="margin-right:.75em"
+          v-show="(this.status==='MITIGATION_REQ_IN_PROGRESS')"
+          icon="spinner"
+          pulse
+        />Blocking ...
+      </span>
+    </div>
+    <!-- END this.status === MITIGATION_REQ_IN_PROGRESS -->
+    <!-- BEGIN this.status === NEW_MITIGATION_REQ -->
     <div v-show="(this.status==='NEW_MITIGATION_REQ')">
       <p class="heading">TARGET</p>
       <p style="margin-bottom:0;padding-bottom:0;" class="subtitle">
@@ -70,11 +104,12 @@
         </el-button>
       </el-button-group>
     </div>
+    <!-- END this.status === NEW_MITIGATION_REQ -->
   </div>
 </template>
 
 <script>
-import constants from '@/constants';
+import constants from "@/constants";
 
 export default {
   data: function() {
@@ -141,7 +176,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 span {
-  margin-left: 0.5em;
   font-size: 12px;
   font-family: "Source Code Pro Regular";
 }
@@ -154,8 +188,5 @@ hr {
   border-style: inset;
   border-width: 0.6px;
   color: #efefef;
-}
-p {
-  margin: 0.5em 0 0.5em 0;
 }
 </style>

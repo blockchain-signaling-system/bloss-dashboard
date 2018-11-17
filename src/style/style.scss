@@ -50,7 +50,7 @@ $family-monospace: "Source Code Pro Regular", monospace;
 $family-primary: "Source Code Pro Regular", monospace;
 $body-family: "Source Code Pro Regular", monospace;
 
-$primary: #989898;
+$primary: #ffeb3b;
 $primary-invert: findColorInvert($primary);
 $twitter: #fcff40;
 $twitter-invert: findColorInvert($twitter);
@@ -62,6 +62,10 @@ $alarm-status: #e28b8b;
 $alarm-status-invert: findColorInvert($alarm-status);
 
 
+// Material Design Color 'yellow' base color for
+// NEW_ALARM and NEW_MITIGATION_REQUEST
+$yellow: #FFEB3B;
+$yellow-invert: findColorInvert($yellow);
 
 $colors: (
     "white": ($white, $black),
@@ -76,7 +80,8 @@ $colors: (
     "twitter": ($twitter, $twitter-invert),
     "status":($status, $status-invert),
     "alarm":($alarm, $alarm-invert),
-    "alarm-status":($alarm-status, $alarm-status-invert)
+    "alarm-status":($alarm-status, $alarm-status-invert),
+    "yellow":($yellow, $yellow-invert)
 );
 
 
