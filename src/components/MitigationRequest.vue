@@ -27,7 +27,7 @@
     <div v-show="(this.status==='MITIGATION_REQ_ACCEPTED')">
       <p class="heading">MREQ INFO</p>
       <span>
-        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at 20:23:33
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
         <br>
         <font-awesome-icon
           style="margin-right:.75em"
@@ -42,7 +42,7 @@
     <div v-show="(this.status==='MITIGATION_REQ_DECLINED')">
       <p class="heading">MREQ INFO</p>
       <span>
-        <font-awesome-icon style="margin-right:.75em" icon="times"/>Declined at 20:23:33
+        <font-awesome-icon style="margin-right:.75em" icon="times"/>Declined at {{moment(this.timestamp_declined).format('hh:mm:ss a')}}
       </span>
     </div>
     <!-- END this.status === MITIGATION_REQ_DECLINED -->
@@ -50,9 +50,9 @@
     <div v-show="(this.status==='MITIGATION_REQ_IN_PROGRESS')">
       <p class="heading">MREQ INFO</p>
       <span>
-        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at 20:23:33
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
         <br>
-        <font-awesome-icon style="margin-right:.75em" icon="check"/>Started blocking at 20:23:45
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>Blocking at {{moment(this.timestamp_in_progress).format('hh:mm:ss a')}}
         <br>
         <font-awesome-icon
           style="margin-right:.75em"
@@ -63,6 +63,18 @@
       </span>
     </div>
     <!-- END this.status === MITIGATION_REQ_IN_PROGRESS -->
+    <!-- BEGIN this.status === MITIGATION_REQ_SUCCESSFUL -->
+    <div v-show="(this.status==='MITIGATION_REQ_SUCCESSFUL')">
+      <p class="heading">MREQ INFO</p>
+      <span>
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
+        <br>
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>Blocking at {{moment(this.timestamp_in_progress).format('hh:mm:ss a')}}
+        <br>
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>Finished at {{moment(this.timestamp_succesful).format('hh:mm:ss a')}}
+      </span>
+    </div>
+    <!-- END this.status === MITIGATION_REQ_SUCCESSFUL -->
     <!-- BEGIN this.status === NEW_MITIGATION_REQ -->
     <div v-show="(this.status==='NEW_MITIGATION_REQ')">
       <p class="heading">TARGET</p>
@@ -123,6 +135,11 @@ export default {
     hash: String,
     target: String,
     timestamp: String,
+    timestamp_requested: String,
+    timestamp_accepted: String,
+    timestamp_declined: String,
+    timestamp_in_progress: String,
+    timestamp_succesful: String,
     action: String,
     subnetwork: String,
     addresses: {

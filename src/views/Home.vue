@@ -71,6 +71,11 @@
                       v-bind:hash="mit.hash"
                       v-bind:target="mit.target"
                       v-bind:timestamp="mit.timestamp"
+                      v-bind:timestamp_requested="mit.timestamp_requested"
+                      v-bind:timestamp_accepted="mit.timestamp_accepted"
+                      v-bind:timestamp_declined="mit.timestamp_declined"
+                      v-bind:timestamp_in_progress="mit.timestamp_in_progress"
+                      v-bind:timestamp_successful="mit.timestamp_successful"
                       v-bind:action="mit.action"
                       v-bind:subnetwork="mit.subnetwork"
                       v-bind:addresses="mit.addresses"
@@ -91,6 +96,11 @@
                       v-bind:hash="mit.hash"
                       v-bind:target="mit.target"
                       v-bind:timestamp="mit.timestamp"
+                      v-bind:timestamp_requested="mit.timestamp_requested"
+                      v-bind:timestamp_accepted="mit.timestamp_accepted"
+                      v-bind:timestamp_declined="mit.timestamp_declined"
+                      v-bind:timestamp_in_progress="mit.timestamp_in_progress"
+                      v-bind:timestamp_successful="mit.timestamp_successful"
                       v-bind:action="mit.action"
                       v-bind:subnetwork="mit.subnetwork"
                       v-bind:addresses="mit.addresses"
@@ -111,6 +121,11 @@
                       v-bind:hash="mit.hash"
                       v-bind:target="mit.target"
                       v-bind:timestamp="mit.timestamp"
+                      v-bind:timestamp_requested="mit.timestamp_requested"
+                      v-bind:timestamp_accepted="mit.timestamp_accepted"
+                      v-bind:timestamp_declined="mit.timestamp_declined"
+                      v-bind:timestamp_in_progress="mit.timestamp_in_progress"
+                      v-bind:timestamp_successful="mit.timestamp_successful"
                       v-bind:action="mit.action"
                       v-bind:subnetwork="mit.subnetwork"
                       v-bind:addresses="mit.addresses"
@@ -137,6 +152,11 @@
                       v-bind:hash="reqMit.hash"
                       v-bind:target="reqMit.target"
                       v-bind:timestamp="reqMit.timestamp"
+                      v-bind:timestamp_requested="reqMit.timestamp_requested"
+                      v-bind:timestamp_accepted="reqMit.timestamp_accepted"
+                      v-bind:timestamp_declined="reqMit.timestamp_declined"
+                      v-bind:timestamp_in_progress="reqMit.timestamp_in_progress"
+                      v-bind:timestamp_successful="reqMit.timestamp_successful"
                       v-bind:action="reqMit.action"
                       v-bind:subnetwork="reqMit.subnetwork"
                       v-bind:addresses="reqMit.addresses"
@@ -156,6 +176,11 @@
                       v-bind:hash="reqMit.hash"
                       v-bind:target="reqMit.target"
                       v-bind:timestamp="reqMit.timestamp"
+                      v-bind:timestamp_requested="reqMit.timestamp_requested"
+                      v-bind:timestamp_accepted="reqMit.timestamp_accepted"
+                      v-bind:timestamp_declined="reqMit.timestamp_declined"
+                      v-bind:timestamp_in_progress="reqMit.timestamp_in_progress"
+                      v-bind:timestamp_successful="reqMit.timestamp_successful"
                       v-bind:action="reqMit.action"
                       v-bind:subnetwork="reqMit.subnetwork"
                       v-bind:addresses="reqMit.addresses"
@@ -175,12 +200,17 @@
                       v-bind:hash="reqMit.hash"
                       v-bind:target="reqMit.target"
                       v-bind:timestamp="reqMit.timestamp"
+                      v-bind:timestamp_requested="reqMit.timestamp_requested"
+                      v-bind:timestamp_accepted="reqMit.timestamp_accepted"
+                      v-bind:timestamp_declined="reqMit.timestamp_declined"
+                      v-bind:timestamp_in_progress="reqMit.timestamp_in_progress"
+                      v-bind:timestamp_successful="reqMit.timestamp_successful"
                       v-bind:action="reqMit.action"
                       v-bind:subnetwork="reqMit.subnetwork"
                       v-bind:addresses="reqMit.addresses"
                       v-bind:status="reqMit.status"
                     ></attack-alarm>
-                     <div v-if="declinedAndSuccessfulRequestMitigations.length === 0">
+                    <div v-if="declinedAndSuccessfulRequestMitigations.length === 0">
                       <el-alert title=" No finalized REQM" type="info" :closable="false"></el-alert>
                     </div>
                   </div>
@@ -370,7 +400,7 @@ export default {
     successfulAndDeclinedMitigationRequests: function() {
       return this.mitigationRequests.filter(function(mitigationRequest) {
         return (
-          mitigationRequest.status == constants.MITIGATION_REQ_SUCCESSFUL||
+          mitigationRequest.status == constants.MITIGATION_REQ_SUCCESSFUL ||
           mitigationRequest.status == constants.MITIGATION_REQ_DECLINED
         );
       });
@@ -434,20 +464,35 @@ export default {
       // Add new reports to the array "MitigationRequests"
       console.log(JSON.stringify(data, null, 2));
       console.log(data);
-
       var attack_report = {
         _id: data.data._id,
         hash: data.data.hash,
         target: data.data.target,
         timestamp: data.data.timestamp,
+        timestamp_requested: data.data.timestamp_requested,
+        timestamp_accepted: data.data.timestamp_accepted,
+        timestamp_declined: data.data.timestamp_declined,
+        timestamp_in_progress: data.data.timestamp_in_progress,
+        timestamp_successful: data.data.timestamp_successful,
         action: data.data.action,
         subnetwork: data.data.subnetwork,
         addresses: data.data.addresses,
         status: data.data.status
       };
 
-      this.mitigationRequests.push(attack_report);
-      // console.log(attack_report);
+      if (data.data.status == constants.MITIGATION_REQ_IN_PROGRESS || data.data.status == constants.MITIGATION_REQ_SUCCESSFUL) {
+        console.log("MITIGATION_REQ_IN_PROGRESS arrived");
+        var indexOfCurrentReport = this.mitigationRequests.findIndex(
+          item => item._id == data.data._id
+        );
+        console.log('indexOfCurrentReport'+indexOfCurrentReport);
+        if (indexOfCurrentReport > -1) {
+          this.mitigationRequests.splice(indexOfCurrentReport, 1);
+          this.mitigationRequests.push(attack_report);
+        }
+      } else {
+        this.mitigationRequests.push(attack_report);
+      }
     },
     alarmChannel(data) {
       // console.log(data);

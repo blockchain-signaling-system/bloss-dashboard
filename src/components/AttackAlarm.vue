@@ -60,6 +60,11 @@ export default {
     hash: String,
     target: String,
     timestamp: String,
+    timestamp_requested: String,
+    timestamp_accepted: String,
+    timestamp_declined: String,
+    timestamp_in_progress: String,
+    timestamp_succesful: String,
     action: String,
     subnetwork: String,
     addresses: {
@@ -87,7 +92,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 span {
-  margin-left: 0.5em;
   font-size: 12px;
   font-family: "Source Code Pro Regular";
 }
@@ -100,8 +104,5 @@ hr {
   border-style: inset;
   border-width: 0.6px;
   color: #efefef;
-}
-p {
-  margin: 0.5em 0 0.5em 0;
 }
 </style>
