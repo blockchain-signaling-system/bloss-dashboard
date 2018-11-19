@@ -1,14 +1,34 @@
 <template>
     <div>
         <div style="margin-left:0.1em;margin-right:0.1em;margin-bottom:1em" class="box">
-            <el-button
-                v-on:click="ignoreAlarm()"
-                style="float:right"
-                size="mini"
-                icon="el-icon-delete"
-                circle
-            ></el-button>
+            <!-- BEGIN this.status === NEW_ALARM -->
+            <span v-show="(this.status==='NEW_ALARM')">
+                <el-button
+                    v-on:click="ignoreAlarm()"
+                    style="float:right"
+                    size="mini"
+                    icon="el-icon-delete"
+                    circle
+                ></el-button>
+            </span>
+            <!-- END this.status === NEW_ALARM -->
             <b-tag style="margin-left:0em;margin-top:0.5em" type="is-alarm">{{this.status}}</b-tag>
+            <!-- BEGIN this.status === NOT NEW_ALARM -->
+            <span
+                v-show="(this.status==='REQ_MITIGATION_REQUESTED' || 
+                this.status ==='REQ_MITIGATION_ACCEPTED' ||
+                this.status ==='REQ_MITIGATION_IN_PROGRESS' ||
+                this.status ==='REQ_MITIGATION_SUCCESSFUL')"
+            >
+                <el-button
+                    v-on:click="showDetails()"
+                    style="float:right"
+                    size="mini"
+                    icon="el-icon-zoom-in"
+                    circle
+                ></el-button>
+            </span>
+            <!-- END this.status === NOT NEW_ALARM -->
             <span style="margin-left:0em;margin-top:0.5em" class="tag">
                 <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
                 {{this.hash}}
@@ -17,8 +37,101 @@
                 <font-awesome-icon icon="clock" style="margin-right:0.25em"/>
                 {{moment(this.timestamp).format('hh:mm:ss a')}}
             </b-tag>
-            <!-- this.status === T_REQUESTS -->
-            <div v-show="!(this.status==='M_APPROVED')">
+            <hr>
+            <!-- BEGIN this.status === REQ_MITIGATION_REQUESTED -->
+            <div v-show="(this.status==='REQ_MITIGATION_REQUESTED')">
+                <p class="heading">MREQ INFO</p>
+                <span>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Alarmed at {{moment(this.timestamp).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Requested at {{moment(this.timestamp_requested).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon
+                        style="margin-right:.75em"
+                        v-show="(this.status==='REQ_MITIGATION_REQUESTED')"
+                        icon="spinner"
+                        pulse
+                    />Waiting for reaction ...
+                </span>
+            </div>
+            <!-- END this.status === REQ_MITIGATION_REQUESTED -->
+            <!-- BEGIN this.status === REQ_MITIGATION_ACCEPTED -->
+            <div v-show="(this.status==='REQ_MITIGATION_ACCEPTED')">
+                <p class="heading">MREQ INFO</p>
+                <span>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Requested at {{moment(this.timestamp_requested).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon
+                        style="margin-right:.75em"
+                        v-show="(this.status==='REQ_MITIGATION_ACCEPTED')"
+                        icon="spinner"
+                        pulse
+                    />Waiting for blocking ...
+                </span>
+            </div>
+            <!-- END this.status === REQ_MITIGATION_ACCEPTED -->
+            <!-- BEGIN this.status === REQ_MITIGATION_IN_PROGRESS -->
+            <div v-show="(this.status==='REQ_MITIGATION_IN_PROGRESS')">
+                <p class="heading">MREQ INFO</p>
+                <span>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Requested at {{moment(this.timestamp_requested).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
+                    <br>
+                                        <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Blocking at {{moment(this.timestamp_in_progress).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon
+                        style="margin-right:.75em"
+                        v-show="(this.status==='REQ_MITIGATION_IN_PROGRESS')"
+                        icon="spinner"
+                        pulse
+                    />Blocking ...
+                </span>
+            </div>
+            <!-- END this.status === REQ_MITIGATION_ACCEPTED -->
+            <!-- BEGIN this.status === REQ_MITIGATION_DECLINED -->
+            <div v-show="(this.status==='REQ_MITIGATION_DECLINED')">
+                <p class="heading">MREQ INFO</p>
+                <span>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Requested at {{moment(this.timestamp_requested).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Declined at {{moment(this.timestamp_declined).format('hh:mm:ss a')}}
+                    <br>
+                </span>
+            </div>
+            <!-- END this.status === REQ_MITIGATION_DECLINED -->
+            <!-- BEGIN this.status === REQ_MITIGATION_SUCCESSFUL -->
+            <div v-show="(this.status==='REQ_MITIGATION_SUCCESSFUL')">
+                <p class="heading">MREQ INFO</p>
+                <span>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Requested at {{moment(this.timestamp_requested).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Blocking at {{moment(this.timestamp_in_progress).format('hh:mm:ss a')}}
+                    <br>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    Finished at {{moment(this.timestamp_succesful).format('hh:mm:ss a')}}
+                    <br>
+                </span>
+            </div>
+            <!-- END this.status === REQ_MITIGATION_SUCCESSFUL -->
+            <!-- BEGIN this.status === NEW_ALARM -->
+            <div v-show="(this.status==='NEW_ALARM')">
                 <p class="heading">TARGET</p>
                 <p style="margin-bottom:0;padding-bottom:0;" class="subtitle">
                     {{this.target}}
@@ -46,6 +159,7 @@
                     </el-button>
                 </el-button-group>
             </div>
+            <!-- END this.status === NEW_ALARM -->
         </div>
     </div>
 </template>
