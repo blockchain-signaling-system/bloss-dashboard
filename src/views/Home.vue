@@ -50,9 +50,126 @@
             </div>
           </div>
         </b-modal>
-        <h1 class="title">BLOSS</h1>
-        <h1 class="subtitle is-6">{{this.subtitle}}</h1>
         <div class="columns">
+          <div class="column">
+            <div class="box">
+              <h1 class="title">BLOSS</h1>
+              <h1 class="subtitle is-6">{{this.subtitle}}</h1>
+              <article class="media">
+                <div class="media-content">
+                  <div class="content">
+                    <p>
+                      <a-badge :status="isConnected ? 'success' : 'warning'"/>
+                      <b-tooltip
+                        :label="isConnected ? 'WSConn to bloss-node instance successful.' : 'Establishing connection...'"
+                        position="is-top"
+                        animated
+                        :type="isConnected ? 'is-success' : 'is-warning'"
+                      >
+                        <b-tag
+                          style="height:2.3em;margin-left:0em;"
+                          class="tag"
+                          :type="isConnected ? 'is-success' : 'is-warning'"
+                        >WEBSOCKET</b-tag>
+                      </b-tooltip>
+                      <span>
+                        <font-awesome-icon v-show="!isConnected" icon="spinner" pulse/>
+                      </span>
+                    </p>
+                    <p>
+                      <a-badge :status="isControllerAvailable ? 'success' : 'warning'"/>
+                      <b-tag
+                        style="height:2.3em;margin-left:0em;"
+                        class="tag"
+                        :type="isControllerAvailable ? 'is-success' : 'is-warning'"
+                      >CONTROLLER</b-tag>
+                      <span>
+                        <font-awesome-icon v-show="!isControllerAvailable" icon="spinner" pulse/>
+                      </span>
+                    </p>
+                    <div v-show="isControllerAvailable">
+                      <div class="tile">
+                        <a-badge :status="serviceStatusBloss ? 'success' : 'error'"/>
+                        <b-tag
+                          style="height:2.3em;margin-left:0em;"
+                          class="tag"
+                          :type="serviceStatusBloss ? 'is-success' : 'is-warning'"
+                        >BLOSS
+                          <font-awesome-icon
+                            :icon="serviceStatusBloss ? 'check' : 'pause-circle'"
+                            style="margin-right:0.25em"
+                          />
+                        </b-tag>
+                        <el-button-group>
+                          <el-button
+                            v-on:click="startService('bloss')"
+                            style="padding=0.25em"
+                            size="mini"
+                          >
+                            <font-awesome-icon icon="play" style="margin-right:0.25em"/>
+                          </el-button>
+                          <el-button v-on:click="killService('bloss')" size="mini">
+                            <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
+                          </el-button>
+                        </el-button-group>
+                      </div>
+                      <a-badge :status="serviceStatusGeth ? 'success' : 'error'"/>
+                      <b-tag
+                        style="height:2.3em;margin-left:0em;"
+                        class="tag"
+                        :type="serviceStatusGeth ? 'is-success' : 'is-warning'"
+                      >GETH
+                        <font-awesome-icon
+                          :icon="serviceStatusGeth ? 'check' : 'pause-circle'"
+                          style="margin-right:0.25em"
+                        />
+                      </b-tag>
+                      <el-button-group>
+                        <el-button style="padding=0.25em" size="mini">
+                          <font-awesome-icon
+                            @click="startService('geth')"
+                            icon="play"
+                            style="margin-right:0.25em"
+                          />
+                        </el-button>
+                        <el-button size="mini">
+                          <font-awesome-icon
+                            @click="killService('geth')"
+                            icon="stop"
+                            style="margin-right:0.25em"
+                          />
+                        </el-button>
+                      </el-button-group>
+                      <br>
+                      <a-badge :status="serviceStatusIPFS ? 'success' : 'error'"/>
+                      <b-tag
+                        style="height:2.3em;margin-left:0em;"
+                        class="tag"
+                        :type="serviceStatusIPFS ? 'is-success' : 'is-warning'"
+                      >IPFS
+                        <font-awesome-icon
+                          :icon="serviceStatusIPFS ? 'check' : 'pause-circle'"
+                          style="margin-right:0.25em"
+                        />
+                      </b-tag>
+                      <el-button-group>
+                        <el-button style="padding=0.25em" size="mini">
+                          <font-awesome-icon
+                            @click="startService('ipfs')"
+                            icon="play"
+                            style="margin-right:0.25em"
+                          />
+                        </el-button>
+                        <el-button @click.native="killService('ipfs')" size="mini">
+                          <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
+                        </el-button>
+                      </el-button-group>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
           <div class="column is-three-quarters">
             <el-tabs tab-position="top" style="height: 200px;">
               <el-tab-pane label="REQUESTS">
@@ -233,121 +350,6 @@
                 </div>
               </el-tab-pane>
             </el-tabs>
-          </div>
-          <div class="column">
-            <article class="media">
-              <div class="media-content">
-                <div class="content">
-                  <p>
-                    <a-badge :status="isConnected ? 'success' : 'warning'"/>
-                    <b-tooltip
-                      :label="isConnected ? 'WSConn to bloss-node instance successful.' : 'Establishing connection...'"
-                      position="is-top"
-                      animated
-                      :type="isConnected ? 'is-success' : 'is-warning'"
-                    >
-                      <b-tag
-                        style="height:2.3em;margin-left:0em;"
-                        class="tag"
-                        :type="isConnected ? 'is-success' : 'is-warning'"
-                      >WEBSOCKET</b-tag>
-                    </b-tooltip>
-                    <span>
-                      <font-awesome-icon v-show="!isConnected" icon="spinner" pulse/>
-                    </span>
-                  </p>
-                  <p>
-                    <a-badge :status="isControllerAvailable ? 'success' : 'warning'"/>
-                    <b-tag
-                      style="height:2.3em;margin-left:0em;"
-                      class="tag"
-                      :type="isControllerAvailable ? 'is-success' : 'is-warning'"
-                    >CONTROLLER</b-tag>
-                    <span>
-                      <font-awesome-icon v-show="!isControllerAvailable" icon="spinner" pulse/>
-                    </span>
-                  </p>
-                  <div v-show="isControllerAvailable">
-                    <div class="tile">
-                      <a-badge :status="serviceStatusBloss ? 'success' : 'error'"/>
-                      <b-tag
-                        style="height:2.3em;margin-left:0em;"
-                        class="tag"
-                        :type="serviceStatusBloss ? 'is-success' : 'is-warning'"
-                      >BLOSS
-                        <font-awesome-icon
-                          :icon="serviceStatusBloss ? 'check' : 'pause-circle'"
-                          style="margin-right:0.25em"
-                        />
-                      </b-tag>
-                      <el-button-group>
-                        <el-button
-                          v-on:click="startService('bloss')"
-                          style="padding=0.25em"
-                          size="mini"
-                        >
-                          <font-awesome-icon icon="play" style="margin-right:0.25em"/>
-                        </el-button>
-                        <el-button v-on:click="killService('bloss')" size="mini">
-                          <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
-                        </el-button>
-                      </el-button-group>
-                    </div>
-                    <a-badge :status="serviceStatusGeth ? 'success' : 'error'"/>
-                    <b-tag
-                      style="height:2.3em;margin-left:0em;"
-                      class="tag"
-                      :type="serviceStatusGeth ? 'is-success' : 'is-warning'"
-                    >GETH
-                      <font-awesome-icon
-                        :icon="serviceStatusGeth ? 'check' : 'pause-circle'"
-                        style="margin-right:0.25em"
-                      />
-                    </b-tag>
-                    <el-button-group>
-                      <el-button style="padding=0.25em" size="mini">
-                        <font-awesome-icon
-                          @click="startService('geth')"
-                          icon="play"
-                          style="margin-right:0.25em"
-                        />
-                      </el-button>
-                      <el-button size="mini">
-                        <font-awesome-icon
-                          @click="killService('geth')"
-                          icon="stop"
-                          style="margin-right:0.25em"
-                        />
-                      </el-button>
-                    </el-button-group>
-                    <br>
-                    <a-badge :status="serviceStatusIPFS ? 'success' : 'error'"/>
-                    <b-tag
-                      style="height:2.3em;margin-left:0em;"
-                      class="tag"
-                      :type="serviceStatusIPFS ? 'is-success' : 'is-warning'"
-                    >IPFS
-                      <font-awesome-icon
-                        :icon="serviceStatusIPFS ? 'check' : 'pause-circle'"
-                        style="margin-right:0.25em"
-                      />
-                    </b-tag>
-                    <el-button-group>
-                      <el-button style="padding=0.25em" size="mini">
-                        <font-awesome-icon
-                          @click="startService('ipfs')"
-                          icon="play"
-                          style="margin-right:0.25em"
-                        />
-                      </el-button>
-                      <el-button @click.native="killService('ipfs')" size="mini">
-                        <font-awesome-icon icon="stop" style="margin-right:0.25em"/>
-                      </el-button>
-                    </el-button-group>
-                  </div>
-                </div>
-              </div>
-            </article>
           </div>
         </div>
       </div>
