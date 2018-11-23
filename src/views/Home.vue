@@ -312,7 +312,7 @@
                     <attack-alarm
                       @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
                       @requestMitigationEvent="requestMitigation(reqMit._id)"
-                      v-for="reqMit in declinedAndSuccessfulRequestMitigations"
+                      v-for="reqMit in ignoredDeclinedAndSuccessfulRequestMitigations"
                       v-bind:key="reqMit.key"
                       v-bind:hash="reqMit.hash"
                       v-bind:target="reqMit.target"
@@ -327,7 +327,7 @@
                       v-bind:addresses="reqMit.addresses"
                       v-bind:status="reqMit.status"
                     ></attack-alarm>
-                    <div v-if="declinedAndSuccessfulRequestMitigations.length === 0">
+                    <div v-if="ignoredDeclinedAndSuccessfulRequestMitigations.length === 0">
                       <el-alert title=" No finalized REQM" type="info" :closable="false"></el-alert>
                     </div>
                   </div>
@@ -421,10 +421,11 @@ export default {
         );
       });
     },
-    declinedAndSuccessfulRequestMitigations: function() {
+    ignoredDeclinedAndSuccessfulRequestMitigations: function() {
       return this.requestMitigations.filter(function(requestMitigation) {
         return (
           requestMitigation.status == constants.REQ_MITIGATION_DECLINED ||
+          requestMitigation.status == constants.ALARM_IGNORED ||
           requestMitigation.status == constants.REQ_MITIGATION_SUCCESSFUL
         );
       });

@@ -12,11 +12,46 @@
                 ></el-button>
             </span>
             <!-- END this.status === NEW_ALARM -->
-            <b-tag style="margin-left:0em;margin-top:0.5em" type="is-alarm">{{this.status}}</b-tag>
+            <b-tag
+                v-show="this.status==='NEW_ALARM'"
+                style="margin-left:0em"
+                type="is-new-alarm"
+            >{{this.status}}</b-tag>
+            <b-tag
+                v-show="this.status==='ALARM_IGNORED'"
+                style="margin-left:0em"
+                type="is-alarm-ignored"
+            >{{this.status}}</b-tag>
+            <b-tag
+                v-show="this.status==='REQ_MITIGATION_REQUESTED'"
+                style="margin-left:0em"
+                type="is-req-mitigation-requested"
+            >{{this.status}}</b-tag>
+            <b-tag
+                v-show="this.status==='REQ_MITIGATION_DECLINED'"
+                style="margin-left:0em"
+                type="is-req-mitigation-declined"
+            >{{this.status}}</b-tag>
+            <b-tag
+                v-show="this.status==='REQ_MITIGATION_ACCEPTED'"
+                style="margin-left:0em"
+                type="is-req-mitigation-accepted"
+            >{{this.status}}</b-tag>
+            <b-tag
+                v-show="this.status==='REQ_MITIGATION_IN_PROGRESS'"
+                style="margin-left:0em"
+                type="is-req-mitigation-in-progress"
+            >{{this.status}}</b-tag>
+            <b-tag
+                v-show="this.status==='REQ_MITIGATION_SUCCESSFUL'"
+                style="margin-left:0em;"
+                type="is-req-mitigation-successful"
+            >{{this.status}}</b-tag>
             <!-- BEGIN this.status === NOT NEW_ALARM -->
             <span
                 v-show="(this.status==='REQ_MITIGATION_REQUESTED' || 
                 this.status ==='REQ_MITIGATION_ACCEPTED' ||
+                this.status ==='ALARM_IGNORED' ||
                 this.status ==='REQ_MITIGATION_IN_PROGRESS' ||
                 this.status ==='REQ_MITIGATION_SUCCESSFUL')"
             >
@@ -29,7 +64,7 @@
                 ></el-button>
             </span>
             <!-- END this.status === NOT NEW_ALARM -->
-            <span style="margin-left:0em;margin-top:0.5em" class="tag">
+            <span class="tag">
                 <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
                 {{this.hash}}
             </span>
@@ -37,7 +72,7 @@
                 <font-awesome-icon icon="clock" style="margin-right:0.25em"/>
                 {{moment(this.timestamp).format('hh:mm:ss a')}}
             </b-tag>
-            <hr>
+            <hr v-show="this.status!=='ALARM_IGNORED'">
             <!-- BEGIN this.status === REQ_MITIGATION_REQUESTED -->
             <div v-show="(this.status==='REQ_MITIGATION_REQUESTED')">
                 <p class="heading">MREQ INFO</p>
@@ -86,7 +121,7 @@
                     <font-awesome-icon style="margin-right:.75em" icon="check"/>
                     Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
                     <br>
-                                        <font-awesome-icon style="margin-right:.75em" icon="check"/>
+                    <font-awesome-icon style="margin-right:.75em" icon="check"/>
                     Blocking at {{moment(this.timestamp_in_progress).format('hh:mm:ss a')}}
                     <br>
                     <font-awesome-icon

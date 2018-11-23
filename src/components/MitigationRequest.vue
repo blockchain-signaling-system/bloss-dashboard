@@ -1,6 +1,30 @@
 <template>
   <div style="margin-left:0.1em;margin-right:0.1em;margin-bottom:1em" class="box">
-    <b-tag style="margin-left:0em" type="is-yellow">{{this.status}}</b-tag>
+    <b-tag
+      v-show="this.status==='NEW_MITIGATION_REQ'"
+      style="margin-left:0em"
+      type="is-new-mitigation-req"
+    >{{this.status}}</b-tag>
+    <b-tag
+      v-show="this.status==='MITIGATION_REQ_ACCEPTED'"
+      style="margin-left:0em"
+      type="is-mitigation-req-accepted"
+    >{{this.status}}</b-tag>
+    <b-tag
+      v-show="this.status==='MITIGATION_REQ_DECLINED'"
+      style="margin-left:0em"
+      type="is-mitigation-req-declined"
+    >{{this.status}}</b-tag>
+    <b-tag
+      v-show="this.status==='MITIGATION_REQ_IN_PROGRESS'"
+      style="margin-left:0em"
+      type="is-mitigation-req-in-progress"
+    >{{this.status}}</b-tag>
+    <b-tag
+      v-show="this.status==='MITIGATION_REQ_SUCCESSFUL'"
+      style="margin-left:0em;"
+      type="is-mitigation-req-successful"
+    >{{this.status}}</b-tag>
     <!-- BEGIN this.status === MITIGATION_REQ_ACCEPTED -->
     <span
       v-show="(this.status==='MITIGATION_REQ_ACCEPTED' || this.status==='MITIGATION_REQ_DECLINED' ||this.status==='MITIGATION_REQ_SUCCESSFUL')"
@@ -27,7 +51,8 @@
     <div v-show="(this.status==='MITIGATION_REQ_ACCEPTED')">
       <p class="heading">MREQ INFO</p>
       <span>
-        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>
+        Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
         <br>
         <font-awesome-icon
           style="margin-right:.75em"
@@ -42,7 +67,8 @@
     <div v-show="(this.status==='MITIGATION_REQ_DECLINED')">
       <p class="heading">MREQ INFO</p>
       <span>
-        <font-awesome-icon style="margin-right:.75em" icon="times"/>Declined at {{moment(this.timestamp_declined).format('hh:mm:ss a')}}
+        <font-awesome-icon style="margin-right:.75em" icon="times"/>
+        Declined at {{moment(this.timestamp_declined).format('hh:mm:ss a')}}
       </span>
     </div>
     <!-- END this.status === MITIGATION_REQ_DECLINED -->
@@ -50,9 +76,11 @@
     <div v-show="(this.status==='MITIGATION_REQ_IN_PROGRESS')">
       <p class="heading">MREQ INFO</p>
       <span>
-        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>
+        Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
         <br>
-        <font-awesome-icon style="margin-right:.75em" icon="check"/>Blocking at {{moment(this.timestamp_in_progress).format('hh:mm:ss a')}}
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>
+        Blocking at {{moment(this.timestamp_in_progress).format('hh:mm:ss a')}}
         <br>
         <font-awesome-icon
           style="margin-right:.75em"
@@ -67,11 +95,14 @@
     <div v-show="(this.status==='MITIGATION_REQ_SUCCESSFUL')">
       <p class="heading">MREQ INFO</p>
       <span>
-        <font-awesome-icon style="margin-right:.75em" icon="check"/>Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>
+        Accepted at {{moment(this.timestamp_accepted).format('hh:mm:ss a')}}
         <br>
-        <font-awesome-icon style="margin-right:.75em" icon="check"/>Blocking at {{moment(this.timestamp_in_progress).format('hh:mm:ss a')}}
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>
+        Blocking at {{moment(this.timestamp_in_progress).format('hh:mm:ss a')}}
         <br>
-        <font-awesome-icon style="margin-right:.75em" icon="check"/>Finished at {{moment(this.timestamp_succesful).format('hh:mm:ss a')}}
+        <font-awesome-icon style="margin-right:.75em" icon="check"/>
+        Finished at {{moment(this.timestamp_succesful).format('hh:mm:ss a')}}
       </span>
     </div>
     <!-- END this.status === MITIGATION_REQ_SUCCESSFUL -->
@@ -192,6 +223,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+
 span {
   font-size: 12px;
   font-family: "Source Code Pro Regular";

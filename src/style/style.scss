@@ -62,10 +62,43 @@ $alarm-status: #e28b8b;
 $alarm-status-invert: findColorInvert($alarm-status);
 
 
+
+
 // Material Design Color 'yellow' base color for
 // NEW_ALARM and NEW_MITIGATION_REQUEST
 $yellow: #FFEB3B;
 $yellow-invert: findColorInvert($yellow);
+
+
+// The following colors stem directly from the state management definition
+
+// Inbound
+$new-mitigation-req: #FFFF72;
+$new-mitigation-req-invert:findColorInvert($new-mitigation-req);
+$mitigation-req-declined: #C1C1C1;
+$mitigation-req-declined-invert: findColorInvert($mitigation-req-declined);
+$mitigation-req-accepted: #FFEB3B;
+$mitigation-req-accepted-invert:findColorInvert($mitigation-req-accepted);
+$mitigation-req-in-progress: #C8B900;
+$mitigation-req-in-progress-invert:findColorInvert($mitigation-req-in-progress);
+$mitigation-req-successful: #ADD681;
+$mitigation-req-successful-invert:findColorInvert($mitigation-req-successful);
+
+// Outbound
+$new-alarm: #D62327;
+$new-alarm-invert:findColorInvert($new-alarm);
+$alarm-ignored: #C1C1C1;
+$alarm-ignored-invert:findColorInvert($alarm-ignored);
+$req-mitigation-requested: #8B0011;
+$req-mitigation-requested-invert:findColorInvert($req-mitigation-requested);
+$req-mitigation-declined: #c1c1C1;
+$req-mitigation-declined-invert:findColorInvert($req-mitigation-declined);
+$req-mitigation-accepted: #FFEB3B;
+$req-mitigation-accepted-invert: findColorInvert($req-mitigation-accepted);
+$req-mitigation-in-progress: #C8B900;
+$req-mitigation-in-progress-invert:findColorInvert($req-mitigation-in-progress);
+$req-mitigation-successful: #ADD681;
+$req-mitigation-successful-invert: findColorInvert($req-mitigation-successful);
 
 $colors: (
     "white": ($white, $black),
@@ -81,7 +114,19 @@ $colors: (
     "status":($status, $status-invert),
     "alarm":($alarm, $alarm-invert),
     "alarm-status":($alarm-status, $alarm-status-invert),
-    "yellow":($yellow, $yellow-invert)
+    "yellow":($yellow, $yellow-invert),
+    "new-mitigation-req":($new-mitigation-req, $new-mitigation-req-invert),
+    "mitigation-req-declined":($mitigation-req-declined,$mitigation-req-declined-invert),
+    "mitigation-req-accepted":($mitigation-req-accepted,$mitigation-req-accepted-invert),
+    "mitigation-req-in-progress":($mitigation-req-in-progress,$mitigation-req-in-progress-invert),
+    "mitigation-req-successful":($mitigation-req-successful,$mitigation-req-successful-invert),
+    "new-alarm":($new-alarm,$new-alarm-invert),
+    "alarm-ignored":($alarm-ignored,$alarm-ignored-invert),
+    "req-mitigation-requested":($req-mitigation-requested,$req-mitigation-requested-invert),
+    "req-mitigation-accepted":($req-mitigation-accepted,$req-mitigation-accepted-invert),
+    "req-mitigation-declined":($req-mitigation-declined,$req-mitigation-declined-invert),
+    "req-mitigation-in-progress":($req-mitigation-in-progress,$req-mitigation-in-progress-invert),
+    "req-mitigation-successful":($req-mitigation-successful,$req-mitigation-successful-invert)
 );
 
 
