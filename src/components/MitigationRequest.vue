@@ -27,7 +27,7 @@
     >{{this.status}}</b-tag>
     <!-- BEGIN this.status === MITIGATION_REQ_ACCEPTED -->
     <span
-      v-show="(this.status==='MITIGATION_REQ_ACCEPTED' || this.status==='MITIGATION_REQ_DECLINED' ||this.status==='MITIGATION_REQ_SUCCESSFUL')"
+      v-show="(this.status==='MITIGATION_REQ_ACCEPTED' || this.status==='MITIGATION_REQ_DECLINED' ||this.status==='MITIGATION_REQ_SUCCESSFUL' || this.status==='MITIGATION_REQ_IN_PROGRESS')"
     >
       <el-button
         v-on:click="showDetails()"

@@ -2,13 +2,250 @@
   <div>
     <section class="section">
       <div class="container">
-        <b-modal :active.sync="isCardModalActive" :width="640" scroll="keep">
+        <b-modal :active.sync="isAlarmReportModalActive" :width="640" scroll="keep">
           <div class="card">
             <div class="card-content">
               <div class="media">
                 <div class="media-left">
-                  <b-tag style="margin-left:0em" type="is-twitter">MREQ</b-tag>
-                  <b-tag style="margin-left:0em" type="is-status">{{this.detailAttackReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAlarmReport.status===this.constants.NEW_ALARM"
+                    style="margin-left:0em"
+                    type="is-new-mitigation-req"
+                  >{{this.detailAlarmReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAlarmReport.status===this.constants.REQ_MITIGATION_REQUESTED"
+                    style="margin-left:0em"
+                    type="is-req-mitigation-requested"
+                  >{{this.detailAlarmReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAlarmReport.status===this.constants.REQ_MITIGATION_ACCEPTED"
+                    style="margin-left:0em"
+                    type="is-req-mitigation-accepted"
+                  >{{this.detailAlarmReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAlarmReport.status===this.constants.REQ_MITIGATION_DECLINED"
+                    style="margin-left:0em"
+                    type="is-req-mitigation-declined"
+                  >{{this.detailAlarmReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAlarmReport.status===this.constants.REQ_MITIGATION_IN_PROGRESS"
+                    style="margin-left:0em"
+                    type="is-req-mitigation-in-progress"
+                  >{{this.detailAlarmReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAlarmReport.status===this.constants.REQ_MITIGATION_SUCCESSFUL"
+                    style="margin-left:0em;"
+                    type="is-req-mitigation-successful"
+                  >{{this.detailAlarmReport.status}}</b-tag>
+                  <span style="margin-left:0em" class="tag">
+                    <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
+                    {{this.detailAlarmReport.hash}}
+                  </span>
+                </div>
+              </div>
+              <div class="media-content">
+                <p class="title">
+                  REQUEST MITIGATION
+                  <small>{{moment(this.detailAlarmReport.timestamp).format('hh:mm:ss a')}}</small>
+                </p>
+                <p style="margin-top:1em; margin-bottom: 0.5em;" class="heading">STATUS</p>
+                <!-- BEGIN NEW_ALARM -->
+                <div v-show="(this.detailAlarmReport.status==this.constants.NEW_ALARM)">
+                  <el-steps direction="vertical" :active="1">
+                    <el-step :title="this.constants.NEW_ALARM"></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_REQUESTED + ' OR '+ this.constants.ALARM_IGNORED"
+                    ></el-step>
+                  </el-steps>
+                </div>
+                <!-- END NEW_ALARM -->
+                 <!-- BEGIN NEW_ALARM -->
+                <div v-show="(this.detailAlarmReport.status==this.constants.ALARM_IGNORED)">
+                  <el-steps direction="vertical" :active="1">
+                    <el-step :title="this.constants.NEW_ALARM"></el-step>
+                    <el-step
+                      :title="this.constants.ALARM_IGNORED"
+                    ></el-step>
+                  </el-steps>
+                </div>
+                <!-- END NEW_ALARM -->
+                <!-- BEGIN REQ_MITIGATION_REQUESTED -->
+                <div
+                  v-show="(this.detailAlarmReport.status==this.constants.REQ_MITIGATION_REQUESTED)"
+                >
+                  <el-steps direction="vertical" :active="2">
+                    <el-step
+                      :title="this.constants.NEW_ALARM"
+                      :description="'Alarmed at ' +moment(this.detailAlarmReport.timestamp).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_REQUESTED"
+                      :description="'Requested at ' +moment(this.detailAlarmReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                  </el-steps>
+                  <font-awesome-icon style="margin-right:.75em" icon="spinner" pulse/>Waiting for answer from Mitigator
+                </div>
+                <!-- END REQ_MITIGATION_REQUESTED -->
+                <!-- BEGIN REQ_MITIGATION_DECLINED -->
+                <div
+                  v-show="(this.detailAlarmReport.status==this.constants.REQ_MITIGATION_DECLINED)"
+                >
+                  <el-steps direction="vertical" :active="2">
+                    <el-step
+                      :title="this.constants.NEW_ALARM"
+                      :description="'Alarmed at ' +moment(this.detailAlarmReport.timestamp).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_REQUESTED"
+                      :description="'Requested at ' +moment(this.detailAlarmReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_DECLINED"
+                      :description="'Declined at ' +moment(this.detailAlarmReport.timestamp_declined).format('hh:mm:ss a')"
+                    ></el-step>
+                  </el-steps>
+                </div>
+                <!-- END REQ_MITIGATION_DECLINED -->
+                <!-- BEGIN REQ_MITIGATION_ACCEPTED -->
+                <div
+                  v-show="(this.detailAlarmReport.status==this.constants.REQ_MITIGATION_ACCEPTED)"
+                >
+                  <el-steps direction="vertical" :active="2">
+                    <el-step
+                      :title="this.constants.NEW_ALARM"
+                      :description="'Alarmed at ' +moment(this.detailAlarmReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_REQUESTED"
+                      :description="'Requested at ' +moment(this.detailAlarmReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_ACCEPTED"
+                      :description="'Accepted at ' +moment(this.detailAlarmReport.timestamp_accepted).format('hh:mm:ss a')"
+                    ></el-step>
+                  </el-steps>
+                  <font-awesome-icon style="margin-right:.75em" icon="spinner" pulse/>Waiting for blocking ...
+                </div>
+                <!-- END REQ_MITIGATION_ACCEPTED -->
+                <!-- BEGIN REQ_MITIGATION_IN_PROGRESS -->
+                <div
+                  v-show="(this.detailAlarmReport.status==this.constants.REQ_MITIGATION_IN_PROGRESS)"
+                >
+                  <el-steps direction="vertical" :active="3">
+                    <el-step
+                      :title="this.constants.NEW_ALARM"
+                      :description="'Requested at ' +moment(this.detailAttackReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_REQUESTED"
+                      :description="'Requested at ' +moment(this.detailAttackReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_ACCEPTED"
+                      :description="'Accepted at ' +moment(this.detailAttackReport.timestamp_accepted).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_IN_PROGRESS"
+                      :description="'Blocking at ' +moment(this.detailAttackReport.timestamp_in_progress).format('hh:mm:ss a')"
+                    ></el-step>
+                  </el-steps>
+                </div>
+                <!-- END REQ_MITIGATION_IN_PROGRESS -->
+                <!-- BEGIN REQ_MITIGATION_SUCCESSFUL -->
+                <div
+                  v-show="(this.detailAlarmReport.status==this.constants.REQ_MITIGATION_SUCCESSFUL)"
+                >
+                  <el-steps direction="vertical" :active="4">
+                    <el-step
+                      :title="this.constants.NEW_ALARM"
+                      :description="'Requested at ' +moment(this.detailAlarmReport.timestamp).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_REQUESTED"
+                      :description="'Requested at ' +moment(this.detailAlarmReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_ACCEPTED"
+                      :description="'Accepted at ' +moment(this.detailAlarmReport.timestamp_accepted).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_IN_PROGRESS"
+                      :description="'Blocking at ' +moment(this.detailAlarmReport.timestamp_in_progress).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.REQ_MITIGATION_SUCCESSFUL"
+                      :description="'Finished at ' +moment(this.detailAlarmReport.timestamp_successful).format('hh:mm:ss a')"
+                    ></el-step>
+                  </el-steps>
+                </div>
+                <!-- END REQ_MITIGATION_SUCCESSFUL -->
+                <br>
+                <p class="heading">TARGET</p>
+                <p
+                  style="margin-bottom:0;padding-bottom:0;"
+                  class="subtitle"
+                >{{this.detailAlarmReport.target}}</p>
+                <span>
+                  <font-awesome-icon style="margin-right:.25em" :icon="['fab', 'ethereum']"/>0.0434 ETH
+                </span>
+                <hr>
+                <p class="heading">ATTACK ORIGIN</p>
+                <p
+                  style="margin-bottom:0;padding-bottom:0;"
+                  class="subtitle"
+                >{{this.detailAlarmReport.subnetwork}}</p>
+                <span>
+                  <font-awesome-icon style="margin-right:.25em" icon="shield-alt"/>
+                  {{this.detailAlarmReport.action}}
+                </span>
+                <br>
+                <span>
+                  <font-awesome-icon style="margin-right:.25em" icon="bug"/>
+                  {{this.detailAlarmReport.addresses}}
+                </span>
+                <br>
+                <br>
+                <el-button-group
+                  v-show="(this.detailAlarmReport.status===this.constants.NEW_ALARM)"
+                >
+                  <el-button v-on:click="requestMitigation()" size="mini">
+                    <font-awesome-icon icon="hands-helping" style="margin-right:0.25em"/>Request Help
+                  </el-button>
+                </el-button-group>
+              </div>
+            </div>
+          </div>
+        </b-modal>
+        <b-modal :active.sync="isAttackReportModalActive" :width="640" scroll="keep">
+          <div class="card">
+            <div class="card-content">
+              <div class="media">
+                <div class="media-left">
+                  <b-tag
+                    v-show="this.detailAttackReport.status==='NEW_MITIGATION_REQ'"
+                    style="margin-left:0em"
+                    type="is-new-mitigation-req"
+                  >{{this.detailAttackReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAttackReport.status==='MITIGATION_REQ_ACCEPTED'"
+                    style="margin-left:0em"
+                    type="is-mitigation-req-accepted"
+                  >{{this.detailAttackReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAttackReport.status==='MITIGATION_REQ_DECLINED'"
+                    style="margin-left:0em"
+                    type="is-mitigation-req-declined"
+                  >{{this.detailAttackReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAttackReport.status==='MITIGATION_REQ_IN_PROGRESS'"
+                    style="margin-left:0em"
+                    type="is-mitigation-req-in-progress"
+                  >{{this.detailAttackReport.status}}</b-tag>
+                  <b-tag
+                    v-show="this.detailAttackReport.status==='MITIGATION_REQ_SUCCESSFUL'"
+                    style="margin-left:0em;"
+                    type="is-mitigation-req-successful"
+                  >{{this.detailAttackReport.status}}</b-tag>
                   <span style="margin-left:0em" class="tag">
                     <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
                     {{this.detailAttackReport.hash}}
@@ -20,25 +257,130 @@
                   MITIGATION REQUEST
                   <small>{{moment(this.detailAttackReport.timestamp).format('hh:mm:ss a')}}</small>
                 </p>
-                <el-steps :active="1" finish-status="success" simple style="margin-top: 20px">
-                  <el-step title="S1" description="T_REQUESTS"></el-step>
-                  <el-step title="S2" description="M_APPROVES|M_ABORT"></el-step>
-                  <el-step title="S3"></el-step>
-                </el-steps>
-                <p style="margin-top:1em; margin-bottom: 0.5em;" class="subtitle">TARGET</p>
-                <p>IP: {{this.detailAttackReport.target}}</p>
-                <p>REPUTATION:
-                  <font-awesome-icon style="margin-right:.25em" icon="star-half-alt"/>65%
-                  <el-progress :percentage="65" status="success"></el-progress>
-                </p>
-              </div>
-              <div class="content">
-                <p style="margin-bottom: 0.5em;margin-top:1em" class="subtitle">ATTACK DETAILS</p>
-                <p>IPFS HASH: {{this.detailAttackReport.hash}}</p>
-                <p>DEFENCE ACTION: {{this.detailAttackReport.action}}</p>
-                <p>ATTACK ORIGIN SUBNETWORK: {{this.detailAttackReport.subnetwork}}</p>
-                <p>ATTACK ORIGIN NODES: {{this.detailAttackReport.addresses}}</p>
-                <el-button-group v-show="!(this.detailAttackReport.status==='M_APPROVED')">>
+                <p style="margin-top:1em; margin-bottom: 0.5em;" class="heading">STATUS</p>
+                <!-- BEGIN NEW_MITIGATION_REQ -->
+                <div v-show="(this.detailAttackReport.status==this.constants.NEW_MITIGATION_REQ)">
+                  <el-steps direction="vertical" :active="0">
+                    <el-step
+                      :title="this.detailAttackReport.status"
+                      :description="'Requested at ' +moment(this.detailAttackReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.MITIGATION_REQ_ACCEPTED + ' OR '+ this.constants.MITIGATION_REQ_DECLINED"
+                    ></el-step>
+                  </el-steps>
+                </div>
+                <!-- END NEW_MITIGATION_REQ -->
+                <!-- BEGIN MITIGATION_REQ_ACCEPTED -->
+                <div
+                  v-show="(this.detailAttackReport.status==this.constants.MITIGATION_REQ_ACCEPTED)"
+                >
+                  <el-steps direction="vertical" :active="1">
+                    <el-step
+                      :title="this.constants.NEW_MITIGATION_REQ"
+                      :description="'Requested at ' +moment(this.detailAttackReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.detailAttackReport.status"
+                      :description="'Accepted at ' +moment(this.detailAttackReport.timestamp_accepted).format('hh:mm:ss a')"
+                    ></el-step>
+                  </el-steps>
+                  <font-awesome-icon style="margin-right:.75em" icon="spinner" pulse/>Waiting for blocking
+                </div>
+                <!-- END MITIGATION_REQ_ACCEPTED -->
+                <!-- BEGIN MITIGATION_REQ_DECLINED -->
+                <div
+                  v-show="(this.detailAttackReport.status==this.constants.MITIGATION_REQ_DECLINED)"
+                >
+                  <el-steps direction="vertical" :active="1">
+                    <el-step
+                      :title="this.constants.NEW_MITIGATION_REQ"
+                      :description="'Requested at ' +moment(this.detailAttackReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.detailAttackReport.status"
+                      :description="'Declined at ' +moment(this.detailAttackReport.timestamp_declined).format('hh:mm:ss a')"
+                    ></el-step>
+                  </el-steps>
+                </div>
+                <!-- END MITIGATION_REQ_DECLINED -->
+                <!-- BEGIN MITIGATION_REQ_IN_PROGRESS -->
+                <div
+                  v-show="(this.detailAttackReport.status==this.constants.MITIGATION_REQ_IN_PROGRESS)"
+                >
+                  <el-steps direction="vertical" :active="2">
+                    <el-step
+                      :title="this.constants.NEW_MITIGATION_REQ"
+                      :description="'Requested at ' +moment(this.detailAttackReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.MITIGATION_REQ_ACCEPTED"
+                      :description="'Accepted at ' +moment(this.detailAttackReport.timestamp_accepted).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.MITIGATION_REQ_IN_PROGRESS"
+                      :description="'Blocking at ' +moment(this.detailAttackReport.timestamp_in_progress).format('hh:mm:ss a')"
+                    ></el-step>
+                  </el-steps>
+                  <font-awesome-icon style="margin-right:.75em" icon="spinner" pulse/>Blocking ...
+                </div>
+                <!-- END MITIGATION_REQ_IN_PROGRESS -->
+                <!-- BEGIN MITIGATION_REQ_IN_PROGRESS -->
+                <div
+                  v-show="(this.detailAttackReport.status==this.constants.MITIGATION_REQ_SUCCESSFUL)"
+                >
+                  <el-steps direction="vertical" :active="3">
+                    <el-step
+                      :title="this.constants.NEW_MITIGATION_REQ"
+                      :description="'Requested at ' +moment(this.detailAttackReport.timestamp_requested).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.MITIGATION_REQ_ACCEPTED"
+                      :description="'Accepted at ' +moment(this.detailAttackReport.timestamp_accepted).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.MITIGATION_REQ_IN_PROGRESS"
+                      :description="'Blocking at ' +moment(this.detailAttackReport.timestamp_in_progress).format('hh:mm:ss a')"
+                    ></el-step>
+                    <el-step
+                      :title="this.constants.MITIGATION_REQ_SUCCESSFUL"
+                      :description="'Finished at ' +moment(this.detailAttackReport.timestamp_successful).format('hh:mm:ss a')"
+                    ></el-step>
+                  </el-steps>
+                </div>
+                <!-- END MITIGATION_REQ_IN_PROGRESS -->
+                <br>
+                <p class="heading">TARGET</p>
+                <p
+                  style="margin-bottom:0;padding-bottom:0;"
+                  class="subtitle"
+                >{{this.detailAttackReport.target}}</p>
+                <span>
+                  <font-awesome-icon style="margin-right:.25em" :icon="['fab', 'ethereum']"/>0.0434 ETH
+                </span>
+                <span>
+                  <font-awesome-icon style="margin-right:.25em" icon="star-half-alt"/>65% Reputation
+                </span>
+                <hr>
+                <p class="heading">ATTACK ORIGIN</p>
+                <p
+                  style="margin-bottom:0;padding-bottom:0;"
+                  class="subtitle"
+                >{{this.detailAttackReport.subnetwork}}</p>
+                <span>
+                  <font-awesome-icon style="margin-right:.25em" icon="shield-alt"/>
+                  {{this.detailAttackReport.action}}
+                </span>
+                <br>
+                <span>
+                  <font-awesome-icon style="margin-right:.25em" icon="bug"/>
+                  {{this.detailAttackReport.addresses}}
+                </span>
+                <br>
+                <br>
+                <el-button-group
+                  v-show="(this.detailAttackReport.status===this.constants.NEW_MITIGATION_REQ)"
+                >
                   <el-button v-on:click="declineMREQ()" size="mini">
                     <font-awesome-icon icon="times" style="margin-right:0.25em"/>DECLINE
                   </el-button>
@@ -262,6 +604,7 @@
                   <div class="column">
                     <p style="margin-top:0.5em" class="col-title">ALARMS</p>
                     <attack-alarm
+                      @showAlarmDetailsEvent="showAlarmDetails(reqMit._id)"
                       @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
                       @requestMitigationEvent="requestMitigation(reqMit._id)"
                       v-for="reqMit in newAlarms"
@@ -286,6 +629,7 @@
                   <div class="column">
                     <p style="margin-top:0.5em" class="col-title">IN PROGRESS</p>
                     <attack-alarm
+                      @showAlarmDetailsEvent="showAlarmDetails(reqMit._id)"
                       @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
                       @requestMitigationEvent="requestMitigation(reqMit._id)"
                       v-for="reqMit in requestedAcceptedAndProgressRequestMitigations"
@@ -310,6 +654,7 @@
                   <div class="column">
                     <p style="margin-top:0.5em" class="col-title">LOG</p>
                     <attack-alarm
+                      @showAlarmDetailsEvent="showAlarmDetails(reqMit._id)"
                       @ignoreAlarmEvent="ignoreAlarm(reqMit._id)"
                       @requestMitigationEvent="requestMitigation(reqMit._id)"
                       v-for="reqMit in ignoredDeclinedAndSuccessfulRequestMitigations"
@@ -368,6 +713,7 @@ export default {
     return {
       subtitle: process.env.VUE_APP_CONTROLLER,
       isConnected: false,
+      constants: constants,
       isControllerAvailable: false,
       socketMessage: "",
       statusMessage: "",
@@ -378,9 +724,12 @@ export default {
       mitigationRequests: [],
       requestMitigations: [],
       isImageModalActive: false,
-      isCardModalActive: false,
+      isAttackReportModalActive: false,
+      isAlarmReportModalActive: false,
       detailAttackReportIndex: -1,
       detailAttackReport: {},
+      detailAlarmReportIndex: -1,
+      detailAlarmReport: {},
       autoAcceptRequests: false,
       autoAcceptAlarms: false
     };
@@ -509,16 +858,6 @@ export default {
         this.displayToast(data.data.status, 3000, "is-alarm");
       }
 
-      // IFF there is already a report with
-      // status: NEW_ALARM
-      // timestamp: not newer, but not a lot older
-      // subnetwork: EQUAL
-      // target: EQUAL
-      // addresses: EQUAL content but might be different order
-      // THEN
-      // we shall replace the current object in the array with the new report
-      // this will happen every second until we decide to request mitigation.
-
       console.log("indexOfCurrentReport" + indexOfCurrentReport);
 
       var alarm_report = {
@@ -607,20 +946,34 @@ export default {
       // console.log("detailAttackReport" + this.detailAttackReport);
       // console.log("ShowDetails for key:" + attackReportId);
       // console.log("detailAttackReportIndex" + this.detailAttackReportIndex);
-      this.isCardModalActive = true;
+      this.isAttackReportModalActive = true;
     },
+    showAlarmDetails(attackReportId){
+      this.detailAlarmReportIndex = this.requestMitigations.findIndex(
+        item => item._id === attackReportId
+      );
+       // console.log("detailAttackReportIndex" + this.detailAttackReportIndex);
+      this.detailAlarmReport = this.requestMitigations[
+        this.detailAlarmReportIndex
+      ];
+      // console.log("detailAttackReport" + this.detailAttackReport);
+      // console.log("ShowDetails for key:" + attackReportId);
+      // console.log("detailAttackReportIndex" + this.detailAttackReportIndex);
+      this.isAlarmReportModalActive = true;
+    },
+    
     acceptMREQ(attackReportId) {
-      if (this.isCardModalActive) {
+      if (this.isAttackReportModalActive) {
         // Coming from detail overview
         console.log("Accepting MREQ:" + this.detailAttackReport._id);
         this.$socket.emit("responseMREQ", {
           action: constants.MITIGATION_REQ_ACCEPTED,
           _id: this.detailAttackReport._id
         });
-        this.isCardModalActive = false;
+        this.isAttackReportModalActive = false;
         // Remove the MREQ from the local array
         var currentMREQIndexDetail = this.mitigationRequests.findIndex(
-          item => item._id === attackReportId
+          item => item._id === this.detailAttackReport._id
         );
         if (currentMREQIndexDetail > -1) {
           this.mitigationRequests.splice(currentMREQIndexDetail, 1);
@@ -644,17 +997,17 @@ export default {
       }
     },
     declineMREQ(attackReportId) {
-      if (this.isCardModalActive) {
+      if (this.isAttackReportModalActive) {
         // Coming from detail overview
         console.log("Declining MREQ:" + this.detailAttackReport._id);
         this.$socket.emit("responseMREQ", {
           action: constants.MITIGATION_REQ_DECLINED,
           _id: this.detailAttackReport._id
         });
-        this.isCardModalActive = false;
+        this.isAttackReportModalActive = false;
         // Remove the MREQ from the local array
         var currentMREQIndexDetail = this.mitigationRequests.findIndex(
-          item => item._id === attackReportId
+          item => item._id === this.detailAttackReport._id
         );
         if (currentMREQIndexDetail > -1) {
           this.mitigationRequests.splice(currentMREQIndexDetail, 1);
@@ -692,19 +1045,36 @@ export default {
       }
     },
     requestMitigation(alarmId) {
-      // Coming from Home screen
-      console.log("Requesting Mitigation Alarm:" + alarmId);
-      this.$socket.emit("alarmResponse", {
-        action: constants.REQ_MITIGATION_REQUESTED,
-        _id: alarmId
-      });
-      // Remove the MREQ from the local array
-      var currentAlarmIndex = this.requestMitigations.findIndex(
-        item => item._id === alarmId
-      );
-      if (currentAlarmIndex > -1) {
-        this.requestMitigations.splice(currentAlarmIndex, 1);
-      }
+    if (this.isAlarmReportModalActive) {
+      // Coming from detail overview
+    console.log("Requesting Mitigation Alarm:" + detailAlarmReport._id);
+        this.$socket.emit("alarmResponse", {
+      action: constants.REQ_MITIGATION_REQUESTED,
+          _id: this.detailAlarmReport._id
+        });
+        this.isAlarmReportModalActive = false;
+        // Remove the MREQ from the local array
+        var currentAlarmIndex = this.requestMitigations.findIndex(
+          item => item._id === this.detailAlarmReport._id
+        );
+        if (currentAlarmIndex > -1) {
+          this.requestMitigations.splice(currentAlarmIndex, 1);
+        }
+      }else{
+    // Coming from Home screen
+    console.log("Requesting Mitigation Alarm:" + alarmId);
+    this.$socket.emit("alarmResponse", {
+      action: constants.REQ_MITIGATION_REQUESTED,
+      _id: alarmId
+    });
+    // Remove the MREQ from the local array
+    var currentAlarmIndex = this.requestMitigations.findIndex(
+      item => item._id === alarmId
+    );
+    if (currentAlarmIndex > -1) {
+      this.requestMitigations.splice(currentAlarmIndex, 1);
+    }}
+  
     },
     displayToast(status, duration, style) {
       this.$toast.open({

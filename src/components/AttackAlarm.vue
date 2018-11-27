@@ -11,6 +11,13 @@
                     circle
                 ></el-button>
             </span>
+            <el-button
+                v-on:click="showAlarmDetails()"
+                style="float:right"
+                size="mini"
+                icon="el-icon-zoom-in"
+                circle
+            ></el-button>
             <!-- END this.status === NEW_ALARM -->
             <b-tag
                 v-show="this.status==='NEW_ALARM'"
@@ -47,23 +54,6 @@
                 style="margin-left:0em;"
                 type="is-req-mitigation-successful"
             >{{this.status}}</b-tag>
-            <!-- BEGIN this.status === NOT NEW_ALARM -->
-            <span
-                v-show="(this.status==='REQ_MITIGATION_REQUESTED' || 
-                this.status ==='REQ_MITIGATION_ACCEPTED' ||
-                this.status ==='ALARM_IGNORED' ||
-                this.status ==='REQ_MITIGATION_IN_PROGRESS' ||
-                this.status ==='REQ_MITIGATION_SUCCESSFUL')"
-            >
-                <el-button
-                    v-on:click="showDetails()"
-                    style="float:right"
-                    size="mini"
-                    icon="el-icon-zoom-in"
-                    circle
-                ></el-button>
-            </span>
-            <!-- END this.status === NOT NEW_ALARM -->
             <span class="tag">
                 <font-awesome-icon icon="file-code" style="margin-right:0.25em"/>
                 {{this.hash}}
@@ -222,17 +212,14 @@ export default {
     status: String
   },
   methods: {
-    showDetails() {
-      this.$emit("showRequestDetailsEvent", this.$vnode.key);
-      // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
+    showAlarmDetails() {
+      this.$emit("showAlarmDetailsEvent", this.$vnode.key);
     },
     ignoreAlarm() {
       this.$emit("ignoreAlarmEvent", this.$vnode.key);
-      // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
     },
     requestMitigation() {
       this.$emit("requestMitigationEvent", this.$vnode.key);
-      // Add this to component in Home.vue : @showRequestDetails="showDetails" and call function
     }
   }
 };
