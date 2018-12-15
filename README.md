@@ -13,6 +13,7 @@ The successful deployment is only possible on a dedicated hardware system that B
   - **`bloss-dashboard`**: This repository. The `bloss-dashboard` component is a front-end dashboard displaying relevant information for the human analyst. The bloss-dashboard is implemented as a single-page application (SPA) and attached to `bloss-node`
 
 ![bloss-full-architecture](/figures/bloss-full-architecture.png)
+![bloss-communication-interfaces](/figures/bloss-communication-interfaces.png)
 
 ## Installation 
 The successful installation is only possible on a dedicated hardware system that it was evaluated on. 
